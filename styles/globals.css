@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -----
+SVG Icons - svgicons.sparkk.fr
+----- */
+
+.absoluteCenter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 50;
+  min-width: 600px; /* Need a specific value to work */
+  width: 600px;
+}
+
+.svg-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.svg-icon path,
+.svg-icon polygon,
+.svg-icon rect {
+  fill: #4691f6;
+}
+
+.svg-icon circle {
+  stroke: red;
+  stroke-width: 1;
+}
+
+.red {
+  width: 1em;
+  height: 1em;
+  fill: red;
+}
+
+.gray {
+  width: 1em;
+  height: 1em;
+  fill: gray;
+}
