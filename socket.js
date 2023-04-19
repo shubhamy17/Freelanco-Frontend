@@ -7,7 +7,7 @@
 import io from "socket.io-client"; // Add this
 
 let socket;
-import { baseURL } from "./constants";
+import { baseURL } from "./constants-url";
 
 const connectSocket = (address) => {
   socket = io(baseURL, {

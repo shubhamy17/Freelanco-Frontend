@@ -1,6 +1,6 @@
 import axios from "axios";
 // const baseURL = "https://freelanco-dao-api.onrender.com/";
-import { baseURL } from "./constants";
+import { baseURL } from "./constants-url";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
