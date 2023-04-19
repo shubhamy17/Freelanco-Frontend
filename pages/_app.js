@@ -3,6 +3,7 @@ import { MoralisProvider } from "react-moralis";
 import NavBar from "../components/NavBar";
 import { AuthProvider } from "../hooks/useAuth";
 import { GigsProvider } from "../hooks/useGigs";
+import { Analytics } from "@vercel/analytics/react";
 
 import {
   createClient,
@@ -60,6 +61,7 @@ function MyApp({ Component, pageProps }) {
                 <RecoilRoot>
                   <NavBar />
                   <Component {...pageProps} />
+                  <Analytics />
                 </RecoilRoot>
               </GigsProvider>
             </AuthProvider>
