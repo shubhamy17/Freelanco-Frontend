@@ -16,6 +16,15 @@ export const CategoryCard = ({ category }) => {
     getData();
   }, []);
 
+  console.log(category);
+
+  const imageMapping = {
+    GameFi: "/a.jpg",
+    DeFi: "/b.jpg",
+    NFT: "/c.jpg",
+    "Consensus Protocols": "/d.jpg",
+  };
+
   return (
     <div
       onClick={() => {
@@ -31,7 +40,7 @@ export const CategoryCard = ({ category }) => {
       }
     >
       <Image
-        src={category.image}
+        src={imageMapping[category.title]}
         width={500}
         height={500}
         // layout="fill"
