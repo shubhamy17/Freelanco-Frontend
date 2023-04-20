@@ -6,7 +6,7 @@ import { requestMessage, verifySignature } from "../../api/auth";
 import jwt_decode from "jwt-decode";
 
 // import { ConnectButton } from "web3uikit";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useAuth from "../../hooks/useAuth";
 
 import {
@@ -31,7 +31,7 @@ const NavBar = () => {
     setAsSeller,
     chainId,
     search,
-    setSearch
+    setSearch,
   } = useAuth();
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -84,12 +84,11 @@ const NavBar = () => {
     setSearch(e.target.value);
   };
 
-
   const colorChangeClass = colorChange
     ? "bg-white text-blue-800"
     : isDarkPage
-      ? "bg-transparent text-white"
-      : "bg-transparent text-blue-800";
+    ? "bg-transparent text-white"
+    : "bg-transparent text-blue-800";
 
   const borderClass = isDarkPage
     ? colorChange
@@ -158,8 +157,8 @@ const NavBar = () => {
                   <Link href="/login">Post a Job</Link>
                 </span> */}
                 {router.pathname === "/freelancer" ||
-                  router.pathname === "/seller" ||
-                  router.pathname === "/seller-profile" ? (
+                router.pathname === "/seller" ||
+                router.pathname === "/seller-profile" ? (
                   <></>
                 ) : (
                   <>
@@ -179,7 +178,7 @@ const NavBar = () => {
                     >
                       {user?.freelancer_ref ? (
                         router.pathname.includes("gig") ||
-                          router.pathname === "/" ? (
+                        router.pathname === "/" ? (
                           <Link href="/seller">Profile</Link>
                         ) : (
                           <Link href="seller">Switch to Seller</Link>
@@ -260,7 +259,7 @@ const NavBar = () => {
               <>
                 {/* when logged in */}
                 {router.pathname === "/explore" ||
-                  router.pathname === "/gigs" ? (
+                router.pathname === "/gigs" ? (
                   isSellerYet ? (
                     <a href="/seller">
                       <span className="font-light cursor-pointer text-sm mt-1">
@@ -301,11 +300,7 @@ const NavBar = () => {
         {/* <div onClick={() => connectAndSign()}> */}
 
         {/* </div> */}
-        {isSignInPage ? (
-          <ConnectButton />
-        ) : (
-          <></>
-        )}
+        {isSignInPage ? <ConnectButton /> : <></>}
       </div>
     </nav>
   );

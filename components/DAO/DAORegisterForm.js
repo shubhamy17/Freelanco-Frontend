@@ -3,12 +3,16 @@ import { useMoralis } from "react-moralis";
 import useAuth from "../../hooks/useAuth";
 import { ethers } from "ethers";
 import ErrorBox from "../Validation/ErrorBox";
+import { useAccount, useNetwork } from "wagmi";
 
 const DAORegisterForm = ({ setWantsToLogin }) => {
   const { account } = useMoralis();
   const { setUser, setIsLoggedIn, user, daoNFTContract, signer } = useAuth();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const requestNFT = async () => {
     try {
@@ -21,7 +25,14 @@ const DAORegisterForm = ({ setWantsToLogin }) => {
       console.log(tx);
       router.push("/dao-home");
     } catch (e) {
-      console.log("E", e);
+      setShowErrorDialog(true);
+      if (e.toString().includes("rejected")) {
+        setErrorMessage("User declined the action");
+      } else if (e.toString().includes("deadline")) {
+        setErrorMessage("Please select a date that is after today's date");
+      } else {
+        setErrorMessage(e.toString());
+      }
     }
   };
 
@@ -47,14 +58,12 @@ const DAORegisterForm = ({ setWantsToLogin }) => {
           <input
             type="text"
             disabled={true}
-            placeholder={
-              user ? String(user?.wallet_address) : "Connect your wallet"
-            }
+            placeholder={address ? String(address) : "Connect your wallet"}
             className="placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 w-3/4 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
           />
           <button
             onClick={() => {
-              if (user) {
+              if (address) {
                 requestNFT();
               } else {
                 setShowErrorDialog(true);

@@ -6,10 +6,17 @@ import useAuth from "../../hooks/useAuth";
 // import Web3 from "web3";
 import { useRouter } from "next/router";
 
-import { useAccount, useConnect, useSignMessage, useDisconnect, useNetwork } from "wagmi";
+import {
+  useAccount,
+  useConnect,
+  useSignMessage,
+  useDisconnect,
+  useNetwork,
+} from "wagmi";
 import { requestMessage, verifySignature } from "../../api/auth";
 
 import jwt_decode from "jwt-decode";
+import ErrorBox from "../Validation/ErrorBox";
 
 const LoginForm = ({ setWantsToLogin }) => {
   const router = useRouter();
@@ -18,7 +25,8 @@ const LoginForm = ({ setWantsToLogin }) => {
 
   const { isConnected, address } = useAccount();
   const { signMessageAsync } = useSignMessage();
-
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(undefined);
 
   const { chain } = useNetwork();
   const {
@@ -31,9 +39,8 @@ const LoginForm = ({ setWantsToLogin }) => {
     AsSeller,
     setAsSeller,
     chainId,
-    isWrongNetwork
+    isWrongNetwork,
   } = useAuth();
-
 
   const connectAndSign = async () => {
     //disconnects the web3 provider if it's already active
@@ -73,18 +80,22 @@ const LoginForm = ({ setWantsToLogin }) => {
       setUser(decodedToken.data.user);
       console.log(user);
       router.push("/explore");
-    } catch (error) {
-      console.log(error.message);
+    } catch (e) {
+      setShowErrorDialog(true);
+      setErrorMessage("You are not a member");
     }
     // console.log(jwt_decode(result.token));
   };
 
-  console.log("addddddddd", address);
   const { push } = useRouter();
-
 
   return (
     <div className="flex flex-col ml-20 mt-20">
+      <ErrorBox
+        cancel={setShowErrorDialog}
+        show={showErrorDialog}
+        errorMessage={errorMessage}
+      />
       <h1 className="text-7xl font-black text-blue-800">Log in</h1>
       <p className="mt-2 text-gray-400 text-sm font-light">
         Enter your credentials to access your account.
@@ -101,9 +112,7 @@ const LoginForm = ({ setWantsToLogin }) => {
         <input
           type="text"
           disabled={true}
-          placeholder={
-            address ? String(address) : "Connect your wallet"
-          }
+          placeholder={address ? String(address) : "Connect your wallet"}
           className="placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 w-3/4 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
         />
         {address &&
