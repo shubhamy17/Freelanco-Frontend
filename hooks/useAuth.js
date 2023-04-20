@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
   const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
   const [currentFreelancerData, setCurrentFreelancerData] = useState(undefined);
   const [freelancerCompletenes, setCompleteness] = useState(undefined);
+  const [search, setSearch] = useState("");
 
   const [isWrongNetwork, setIsWrongNetwork] = useState(undefined);
 
@@ -143,6 +144,8 @@ export const AuthProvider = ({ children }) => {
         setCompleteness,
         isWrongNetwork,
         setIsWrongNetwork,
+        search,
+        setSearch
       }}
     >
       {children}
