@@ -5,7 +5,8 @@ import { requestMessage, verifySignature } from "../../api/auth";
 
 import jwt_decode from "jwt-decode";
 
-import { ConnectButton } from "web3uikit";
+// import { ConnectButton } from "web3uikit";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import useAuth from "../../hooks/useAuth";
 
 import {
@@ -70,56 +71,19 @@ const NavBar = () => {
     setIsLoggedIn(false);
   };
 
+  // RainbowKit.onWalletChange(async (wallet) => {
+  //   connectAndSign();
+  //   // const data = await response.json();
+  // });
+
   useEffect(() => window.addEventListener("scroll", changeNavbarColor));
 
-  const connectAndSign = async () => {
-    //disconnects the web3 provider if it's already active
-    if (isConnected) {
-      await disconnectAsync();
-    }
-    // enabling the web3 provider metamask
-    const { account, chain } = await connectAsync({
-      connector: new InjectedConnector(),
-    });
-
-    const userData = { address: account, chain: chain.id, network: "evm" };
-    // making a post request to our 'request-message' endpoint
-    const data = await requestMessage(userData);
-    const message = data.message;
-
-    // signing the received message via metamask
-    const signature = await signMessageAsync({ message });
-    const verification_data = { message, signature };
-    const result = await verifySignature(verification_data);
-
-    console.log(result.token);
-    //decrypt token and set user context
-    const token = result.token;
-    localStorage.setItem("token", token);
-    try {
-      // const decodedToken = jwt.verify(
-      //   token,
-      //   "MyUltraSecurePassWordIWontForgetToChange",
-      //   { algorithms: ["HS256"] }
-      // );
-      const decodedToken = jwt_decode(token);
-      console.log(decodedToken);
-
-      setIsLoggedIn(true);
-      setToken(result.token);
-      setUser(decodedToken.data.user);
-      console.log(user);
-    } catch (error) {
-      console.log(error.message);
-    }
-    // console.log(jwt_decode(result.token));
-  };
 
   const colorChangeClass = colorChange
     ? "bg-white text-blue-800"
     : isDarkPage
-    ? "bg-transparent text-white"
-    : "bg-transparent text-blue-800";
+      ? "bg-transparent text-white"
+      : "bg-transparent text-blue-800";
 
   const borderClass = isDarkPage
     ? colorChange
@@ -186,8 +150,8 @@ const NavBar = () => {
                   <Link href="/login">Post a Job</Link>
                 </span> */}
                 {router.pathname === "/freelancer" ||
-                router.pathname === "/seller" ||
-                router.pathname === "/seller-profile" ? (
+                  router.pathname === "/seller" ||
+                  router.pathname === "/seller-profile" ? (
                   <></>
                 ) : (
                   <>
@@ -207,7 +171,7 @@ const NavBar = () => {
                     >
                       {user?.freelancer_ref ? (
                         router.pathname.includes("gig") ||
-                        router.pathname === "/" ? (
+                          router.pathname === "/" ? (
                           <Link href="/seller">Profile</Link>
                         ) : (
                           <Link href="seller">Switch to Seller</Link>
@@ -288,7 +252,7 @@ const NavBar = () => {
               <>
                 {/* when logged in */}
                 {router.pathname === "/explore" ||
-                router.pathname === "/gigs" ? (
+                  router.pathname === "/gigs" ? (
                   isSellerYet ? (
                     <a href="/seller">
                       <span className="font-light cursor-pointer text-sm mt-1">
@@ -326,22 +290,11 @@ const NavBar = () => {
             )}
           </>
         )}
+        {/* <div onClick={() => connectAndSign()}> */}
 
+        {/* </div> */}
         {isSignInPage ? (
-          <span
-            onClick={() => connectAndSign()}
-            disable={isLoggedIn}
-            className={
-              "font-light border-2 px-3 py-1 rounded-md text-sm cursor-pointer -mt-1 " +
-              borderClass
-            }
-          >
-            {isLoggedIn ? (
-              <span> Connected </span>
-            ) : (
-              <span>Connect with MetaMask</span>
-            )}
-          </span>
+          <ConnectButton />
         ) : (
           <></>
         )}

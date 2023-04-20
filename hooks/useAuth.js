@@ -45,6 +45,9 @@ export const AuthProvider = ({ children }) => {
     setProvider(provider);
     setSigner(provider.getSigner());
     setChainID(window.ethereum.networkVersion);
+    if (parseInt(window.ethereum.networkVersion) === 80001) {
+      setIsWrongNetwork(false);
+    }
     setNetwork(chainIdToNetwork[chainId]);
     localStorage.setItem("isWalletConnected", true);
     // console.log("contractAddresses", contractAddresses["Gig"][window.ethereum.networkVersion][0], contractAddresses["Freelanco"][window.ethereum.networkVersion][0]);
@@ -84,9 +87,9 @@ export const AuthProvider = ({ children }) => {
       window.ethereum.on("chainChanged", (e) => {
         setChainID(parseInt(e));
         if (parseInt(e) === 80001) {
-          setIsWrongNetwork(true);
-        } else {
           setIsWrongNetwork(false);
+        } else {
+          setIsWrongNetwork(true);
         }
       });
     }
