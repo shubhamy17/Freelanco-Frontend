@@ -5,7 +5,8 @@ import { requestMessage, verifySignature } from "../../api/auth";
 
 import jwt_decode from "jwt-decode";
 
-import { ConnectButton } from "web3uikit";
+// import { ConnectButton } from "web3uikit";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useAuth from "../../hooks/useAuth";
 
 import {
@@ -29,6 +30,8 @@ const NavBar = () => {
     AsSeller,
     setAsSeller,
     chainId,
+    search,
+    setSearch,
   } = useAuth();
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -70,49 +73,15 @@ const NavBar = () => {
     setIsLoggedIn(false);
   };
 
+  // RainbowKit.onWalletChange(async (wallet) => {
+  //   connectAndSign();
+  //   // const data = await response.json();
+  // });
+
   useEffect(() => window.addEventListener("scroll", changeNavbarColor));
 
-  const connectAndSign = async () => {
-    //disconnects the web3 provider if it's already active
-    if (isConnected) {
-      await disconnectAsync();
-    }
-    // enabling the web3 provider metamask
-    const { account, chain } = await connectAsync({
-      connector: new InjectedConnector(),
-    });
-
-    const userData = { address: account, chain: chain.id, network: "evm" };
-    // making a post request to our 'request-message' endpoint
-    const data = await requestMessage(userData);
-    const message = data.message;
-
-    // signing the received message via metamask
-    const signature = await signMessageAsync({ message });
-    const verification_data = { message, signature };
-    const result = await verifySignature(verification_data);
-
-    console.log(result.token);
-    //decrypt token and set user context
-    const token = result.token;
-    localStorage.setItem("token", token);
-    try {
-      // const decodedToken = jwt.verify(
-      //   token,
-      //   "MyUltraSecurePassWordIWontForgetToChange",
-      //   { algorithms: ["HS256"] }
-      // );
-      const decodedToken = jwt_decode(token);
-      console.log(decodedToken);
-
-      setIsLoggedIn(true);
-      setToken(result.token);
-      setUser(decodedToken.data.user);
-      console.log(user);
-    } catch (error) {
-      console.log(error.message);
-    }
-    // console.log(jwt_decode(result.token));
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
   };
 
   const colorChangeClass = colorChange
@@ -150,6 +119,8 @@ const NavBar = () => {
             <div className="flex justify-start items-center ml-5 mt-1">
               <input
                 type="text"
+                onChange={handleSearchChange}
+                value={search}
                 className="placeholder:italic placeholder:text-slate-500 w-[30vw] block rounded-l-lg bg-white h-10 border border-slate-300 py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-blue-800 focus:ring-sky-500 focus:ring-1 sm:text-sm hover:border-blue-800"
                 placeholder={
                   isSearchPage
@@ -326,25 +297,10 @@ const NavBar = () => {
             )}
           </>
         )}
+        {/* <div onClick={() => connectAndSign()}> */}
 
-        {isSignInPage ? (
-          <span
-            onClick={() => connectAndSign()}
-            disable={isLoggedIn}
-            className={
-              "font-light border-2 px-3 py-1 rounded-md text-sm cursor-pointer -mt-1 " +
-              borderClass
-            }
-          >
-            {isLoggedIn ? (
-              <span> Connected </span>
-            ) : (
-              <span>Connect with MetaMask</span>
-            )}
-          </span>
-        ) : (
-          <></>
-        )}
+        {/* </div> */}
+        {isSignInPage ? <ConnectButton /> : <></>}
       </div>
     </nav>
   );

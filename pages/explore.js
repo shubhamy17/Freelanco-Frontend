@@ -9,21 +9,33 @@ import { getProposalsOfClient } from "../api/auth";
 import { getAllGig, getPopular } from "../api/gig";
 
 const GigsListing = () => {
-  const [recommendedGigs, setRecomendedGigs] = useState([]);
+  const [recommendedGigs, setRecommendedGigs] = useState([]);
   const [mostPopular, setMostPopular] = useState([]);
+  const [filteredGigs, setFilteredGigs] = useState([]);
 
-  const { user } = useAuth();
+  const { user, search } = useAuth();
 
   useEffect(() => {
     const getData = async () => {
       const res = await getPopular();
-      console.log("RESL", res);
       setMostPopular(
-        res.filter((r) => r.freelancer.wallet_address != user.wallet_address)
+        res.filter((r) => r.freelancer.wallet_address !== user.wallet_address)
       );
     };
     if (user) getData();
   }, [user]);
+
+  useEffect(() => {
+    if (search) {
+      const filtered = mostPopular.filter((gig) => {
+        const searchFields = [gig.title, gig.category, gig.sub_category, ...gig.skill];
+        return searchFields.some(field => field.toLowerCase().includes(search.toLowerCase()));
+      });
+      setFilteredGigs(filtered);
+    } else {
+      setFilteredGigs(mostPopular);
+    }
+  }, [search, mostPopular]);
 
   return (
     <div className="flex-col mt-20 transition ease-in-out delay-80 w-full">
@@ -31,17 +43,12 @@ const GigsListing = () => {
         <div className="mt-10 w-full mr-5">
           <Deck />
         </div>
-        {/* // <CategoryCard title={"Logo Design"} desc={"Buld your Logo"} />
-          // <CategoryCard title={"Logo Design"} desc={"Buld your Logo"} />
-          // <CategoryCard title={"Logo Design"} desc={"Buld your Logo"} />
-          // <CategoryCard title={"Logo Design"} desc={"Buld your Logo"} />
-          // <CategoryCard title={"Logo Design"} desc={"Buld your Logo"} /> */}
       </div>
       <div className="px-20 transition ease-in-out delay-80 ">
         <p className="text-2xl font-semibold">Most Popular Gigs</p>
         <div className="flex flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
-          {mostPopular.length > 0 ? (
-            mostPopular.map((gig) => <GigCard gig={gig} />)
+          {filteredGigs.length > 0 ? (
+            filteredGigs.map((gig) => <GigCard key={gig._id} gig={gig} />)
           ) : (
             <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col absoluteCenter">
               <img

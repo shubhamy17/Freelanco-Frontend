@@ -1,32 +1,62 @@
 import React, { useState } from "react";
-// import jwt_decode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 import { useMoralis } from "react-moralis";
 // import { loginUser, profile, validateUser } from "../api/auth";
 import useAuth from "../../hooks/useAuth";
 import { useRouter } from "next/router";
 import ErrorBox from "../Validation/ErrorBox";
+import { useAccount, useNetwork, useSignMessage } from "wagmi";
+import { requestMessage, verifySignature } from "../../api/auth";
 // import Web3 from "web3";
 
 const { ethers } = require("ethers");
 
 const LoginForm = ({ setWantsToLogin }) => {
-  const { setUser, setIsLoggedIn, user, daoNFTContract } = useAuth();
+  const {
+    isLoggedIn,
+    user,
+    setIsLoggedIn,
+    setToken,
+    isSellerYet,
+    setUser,
+    AsSeller,
+    setAsSeller,
+    chainId,
+    isWrongNetwork,
+    daoNFTContract,
+  } = useAuth();
   const { account } = useMoralis();
   const router = useRouter();
 
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const { signMessageAsync } = useSignMessage();
 
-  const getData = async () => {
-    let res = await daoNFTContract.balanceOf(
-      ethers.utils.getAddress(user.wallet_address)
-    );
+  const getData = async (userArg) => {
+    let res;
+    if (user) {
+      res = await daoNFTContract.balanceOf(
+        ethers.utils.getAddress(user.wallet_address)
+      );
+    } else {
+      res = await daoNFTContract.balanceOf(
+        ethers.utils.getAddress(userArg.wallet_address)
+      );
+    }
+    if (!res) {
+      alert("You are not a member 2");
+      return;
+    }
     res = Number(res._hex);
 
     if (res > 0) {
       router.push("/dao-home");
     } else {
-      alert("You are not a member");
+      setShowErrorDialog(true);
+      setErrorMessage("You are not a member");
     }
   };
 
@@ -43,15 +73,55 @@ const LoginForm = ({ setWantsToLogin }) => {
       </p>
       <form
         className="flex flex-col mt-16"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           // router.push("/dao-home");
           if (user) {
-            getData();
+            await getData();
           } else {
-            setShowErrorDialog(true);
-            setErrorMessage("Please Connect Your Wallet");
-            setShowErrorDialog(true);
+            if (address) {
+              const userData = {
+                address: address,
+                chain: chain.id,
+                network: "evm",
+              };
+              // making a post request to our 'request-message' endpoint
+              const data = await requestMessage(userData);
+              const message = data.message;
+
+              // signing the received message via metamask
+              const signature = await signMessageAsync({ message });
+              const verification_data = { message, signature };
+              const result = await verifySignature(verification_data);
+
+              console.log(result.token);
+              //decrypt token and set user context
+              const token = result.token;
+              localStorage.setItem("token", token);
+              try {
+                // const decodedToken = jwt.verify(
+                //   token,
+                //   "MyUltraSecurePassWordIWontForgetToChange",
+                //   { algorithms: ["HS256"] }
+                // );
+                const decodedToken = jwt_decode(token);
+                console.log(decodedToken);
+
+                setIsLoggedIn(true);
+                setToken(result.token);
+                setUser(decodedToken.data.user);
+                console.log(user);
+                await getData(decodedToken.data.user);
+              } catch (e) {
+                setShowErrorDialog(true);
+                setErrorMessage(e.toString());
+                setShowErrorDialog(true);
+              }
+            } else {
+              setShowErrorDialog(true);
+              setErrorMessage("Please Connect Your Wallet");
+              setShowErrorDialog(true);
+            }
           }
         }}
       >
@@ -61,9 +131,7 @@ const LoginForm = ({ setWantsToLogin }) => {
         <input
           type="text"
           disabled={true}
-          placeholder={
-            user ? String(user?.wallet_address) : "Connect your wallet"
-          }
+          placeholder={address ? String(address) : "Connect your wallet"}
           className="placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 w-3/4 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
         />
         <button
