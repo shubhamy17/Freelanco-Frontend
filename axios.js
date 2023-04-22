@@ -16,6 +16,8 @@ const updateToken = () => {
       axiosInstance.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;
+      axiosInstance.defaults.headers.common["User-Agent"] = 'PostmanRuntime/7.32.2'
+
     })
     .catch((err) => console.log(err));
 };
