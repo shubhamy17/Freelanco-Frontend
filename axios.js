@@ -5,6 +5,7 @@ import { baseURL } from "./constants-url";
 const axiosInstance = axios.create({
   baseURL: baseURL,
   timeout: 50000000,
+  withCredentials: true
 });
 
 const updateToken = () => {
