@@ -12,6 +12,9 @@ import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { default as ReactSelect } from "react-select";
+import { components } from "react-select";
+import TxBox from "../components/Validation/TxBox";
 import jwt_decode from "jwt-decode";
 import useGigs from "../hooks/useGigs";
 import { uploadImage } from "../api/ipfs";
@@ -43,18 +46,7 @@ const CreateFreelancerPage = () => {
     name: "skill",
   });
   console.log(data);
-  // const [skills, setSkills] = useState([
-  //   { id: 1, name: "React" },
-  //   { id: 2, name: "Node" },
-  //   { id: 3, name: "JS" },
-  //   { id: 4, name: "HTML" },
-  //   { id: 5, name: "CSS" },
-  // ]);
 
-  // const value = useWatch({
-  //   name: "skill",
-  //   control,
-  // });
 
   const router = useRouter();
 
@@ -64,23 +56,53 @@ const CreateFreelancerPage = () => {
   const [isHourlySelected, setIsHourlySelected] = useState(false);
   const [price, setPrice] = useState(null);
   const [jd, setJd] = useState("");
-  const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
+  // const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(false);
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const { isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const [validationErrors, setValidationErrors] = useState("");
   const [imageUploaded, setImageUploaded] = useState(null);
+  const [showTxDialog, setShowTxDialog] = useState(false);
+  const [txMessage, setTxMessage] = useState(undefined);
 
-  // useEffect(() => {
-  //   const fetchSkills = async () => {
-  //     if (counter === 2) {
-  //       await getSkills().then(setSkills);
-  //     }
-  //   };
-  //   fetchSkills();
-  // }, [counter]);
+
+  const [skill, setSkill] = useState([]);
+
+  console.log("skill", skill);
+
+  const Option = (props) => {
+    return (
+      <div>
+        <components.Option {...props}>
+          <input
+            type="checkbox"
+            checked={props.isSelected}
+            onChange={() => null}
+          />{" "}
+          <label>{props.label}</label>
+        </components.Option>
+      </div>
+    );
+  };
+
+  const skillOptions = [
+    { value: "ReactJs", label: "ReactJs" },
+    { value: "AngularJs", label: "AngularJs" },
+    { value: "React Native", label: "React native" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "Mongo", label: "Mongo" },
+  ];
+  function handleChange(selected) {
+    const skill_data = selected.map((s) => s.value);
+    setValue("skill", []); // Remove all items from the fields array
+    skill_data.forEach((skill) => {
+      append(skill); // Add new skill fields based on the selected skills
+    });
+  }
+
 
   const setShortTerm = () => {
     setIsShortTermSelected(true);
@@ -98,7 +120,59 @@ const CreateFreelancerPage = () => {
     setIsHourlySelected(false);
   };
 
-  // };
+
+
+  function handleValidation() {
+    const errors = {};
+
+    if (!getValues("name")) {
+      errors.name = 'Name is required';
+    }
+
+    if (!getValues("email")) {
+      errors.email = 'Email is required';
+    }
+
+    if (!getValues("category")) {
+      errors.category = 'Category is required';
+    }
+
+    if (!getValues("ipfsImageHash")) {
+      errors.image = 'image is required';
+    }
+
+    if (Object.keys(errors).length == 0 && counter == 0) {
+      setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return;
+    }
+
+    if (!getValues("occupation")) {
+      errors.occupation = 'please mention your job role';
+    }
+    if (getValues("description").split(" ").length < 20) {
+      errors.description = 'write at least 20 words about you ';
+    }
+
+    console.log("errors", errors);
+
+    if (Object.keys(errors).length == 0 && counter == 1) {
+      setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return;
+    }
+    if (getValues("skill").length < 2) {
+      errors.skill = `select at least 2 skills`;
+    }
+    if (Object.keys(errors).length == 0 && counter == 2) {
+      setValidationErrors("");
+      return true;
+    }
+
+    setValidationErrors(errors);
+
+  }
+
 
   const updateUser = async () => {
     try {
@@ -126,16 +200,28 @@ const CreateFreelancerPage = () => {
   };
 
   const sendImageToBackend = async (e) => {
+    setShowTxDialog(true);
+    setTxMessage("profile picture uploading to ipfs");
     setImageUploaded(e.target.files[0]);
     const dataF = new FormData();
     dataF.append("file", e.target.files[0]);
     const res = await uploadImage(dataF);
     console.log("eeeeeeeeeee", res);
     setValue("ipfsImageHash", res.IpfsHash);
+    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setTimeout(() => {
+      setShowTxDialog(false);
+    }, 1000);
   };
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-120px)] mt-20">
+      <TxBox
+        show={showTxDialog}
+        cancel={setShowTxDialog}
+        txMessage={txMessage}
+      // routeToPush={"/client-profile"}
+      />
       <div className="h-3/4 w-[calc(70vw)] border-2 border-gray-200 shadow-lg">
         <div className="h-16 w-full flex justify-start items-center border-b pl-8">
           <span className="font-light font-serif text-2xl">
@@ -170,6 +256,9 @@ const CreateFreelancerPage = () => {
                       type="text"
                       className="mr-2 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
+                    {validationErrors.name && (
+                      <span className="text-red-500">{validationErrors.name}</span>
+                    )}
                     <label
                       htmlFor="email"
                       className="text-sm font-semibold text-gray-500"
@@ -182,9 +271,12 @@ const CreateFreelancerPage = () => {
                       type="email"
                       className="mr-2 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
+                    {validationErrors.email && (
+                      <span className="text-red-500">{validationErrors.email}</span>
+                    )}
 
                     <label
-                      htmlFor="title"
+                      htmlFor="category"
                       className="text-sm font-semibold text-gray-500"
                     >
                       Category
@@ -206,6 +298,9 @@ const CreateFreelancerPage = () => {
                           </option>
                         ))}
                     </select>
+                    {validationErrors.category && (
+                      <span className="text-red-500">{validationErrors.category}</span>
+                    )}
                   </form>
                 </div>
 
@@ -269,6 +364,9 @@ const CreateFreelancerPage = () => {
                           />
                         </label>
                       </div>
+                      {validationErrors.image && (
+                        <span className="text-red-500">{validationErrors.image}</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -278,9 +376,10 @@ const CreateFreelancerPage = () => {
                 <button
                   // disabled={user?.metamask_verified}
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8"
-                  onClick={() => {
-                    setCounter((prevState) => prevState + 1);
-                  }}
+                  // onClick={() => {
+                  // setCounter((prevState) => prevState + 1);
+                  // }}
+                  onClick={handleValidation}
                 >
                   Continue
                 </button>
@@ -298,6 +397,9 @@ const CreateFreelancerPage = () => {
                 className="placeholder:italic placeholder:text-slate-400 block bg-white w-1/2 h-16 border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 name="occupation"
               />
+              {validationErrors.occupation && (
+                <span className="text-red-500">{validationErrors.occupation}</span>
+              )}
               <label
                 htmlFor="description"
                 className="font-bold text-xl mb-4 mt-4"
@@ -309,6 +411,9 @@ const CreateFreelancerPage = () => {
                 {...register("description")}
                 className="mr-2 w-2/3 h-32 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               />
+              {validationErrors.description && (
+                <span className="text-red-500">{validationErrors.description}</span>
+              )}
               <div className="flex w-full h-32 justify-end items-end">
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 mr-2"
@@ -320,9 +425,10 @@ const CreateFreelancerPage = () => {
                 </button>
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
-                  onClick={() => {
-                    setCounter((prevState) => prevState + 1);
-                  }}
+                  // onClick={() => {
+                  //   setCounter((prevState) => prevState + 1);
+                  // }}
+                  onClick={handleValidation}
                 >
                   Continue
                 </button>
@@ -361,8 +467,23 @@ const CreateFreelancerPage = () => {
       >
         Add Skill
       </button> */}
-
-              <div className="flex flex-wrap">
+              <ReactSelect
+                options={skillOptions}
+                isMulti
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+                components={{
+                  Option,
+                }}
+                onChange={handleChange}
+                allowSelectAll={true}
+                value={skill.optionSelected}
+                className="block w-full bg-gray-200 text-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              />
+              {validationErrors.skill && (
+                <span className="text-red-500">{validationErrors.skill}</span>
+              )}
+              {/* <div className="flex flex-wrap">
                 {skills.map((skill, idx) => {
                   return (
                     <div
@@ -409,7 +530,7 @@ const CreateFreelancerPage = () => {
                     </div>
                   );
                 })}
-              </div>
+              </div> */}
 
               <div className="flex w-full h-24 justify-end items-end">
                 <button
@@ -422,9 +543,16 @@ const CreateFreelancerPage = () => {
                 </button>
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
-                  onClick={() => {
-                    // setCounter((prevState) => prevState + 1);
-                    updateUser();
+                // onClick={() => {
+                //   // setCounter((prevState) => prevState + 1);
+                //   updateUser();
+                // }}
+                  onClick={async () => {
+                    const p = handleValidation();
+                    console.log("ppppppppppppppp", p);
+                    if (p) {
+                      await updateUser(); 
+                    }
                   }}
                 >
                   Save & Continue

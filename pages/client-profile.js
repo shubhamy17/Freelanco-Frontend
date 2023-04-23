@@ -6,6 +6,7 @@ import ClientOrdersManagement from "../components/Client/OrderManagement";
 import { getProposalByGigRef } from "../api/proposal";
 import Link from "next/link";
 import Image from "next/image";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const ClientProfile = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -17,6 +18,7 @@ const ClientProfile = () => {
   const [approvedProosals, setApprovedProosals] = useState([]);
   const [successfulProposals, setSuccessfulProposals] = useState([]);
   const [selectedOrder, setSeletedOrder] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { user } = useAuth();
 
@@ -50,7 +52,7 @@ const ClientProfile = () => {
               index === self.findIndex((p) => p.token_id === proposal.token_id)
           )
       );
-
+      setIsLoading(false);
       console.log(
         "Sent",
         result.filter((r) => r.status == "Sent")
@@ -97,8 +99,8 @@ const ClientProfile = () => {
                 selectedTab == 1
                   ? "text-md cursor-pointer px-4 py-2.5 bg-gray-100 rounded-2xl text-blue-800"
                   : selectedTab == 2
-                  ? "text-2xl text-blue-800 font-semibold"
-                  : "text-md cursor-pointer px-4 py-2.5 bg-gray-100 rounded-2xl text-blue-800"
+                    ? "text-2xl text-blue-800 font-semibold"
+                    : "text-md cursor-pointer px-4 py-2.5 bg-gray-100 rounded-2xl text-blue-800"
               }
               onClick={() => setSelectedTab(2)}
             >
@@ -108,7 +110,11 @@ const ClientProfile = () => {
         </div>
         {selectedTab == 0 && (
           <div className="flex flex-wrap gap-x-6 gap-y-6">
-            {sentProposals.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center align-center ">
+                <CircularProgress />
+              </div>
+            ) : sentProposals.length > 0 ? (
               sentProposals.map((gig, idx) => {
                 return (
                   <GigCard
@@ -135,6 +141,7 @@ const ClientProfile = () => {
                 </div>
               </div>
             )}
+
           </div>
         )}
         {selectedTab == 1 && (
@@ -171,7 +178,7 @@ const ClientProfile = () => {
                           <div className="flex flex-col">
                             <Link
                               href={`/freelancer-profile/${successfulProposals[selectedOrder]?.client?._id}`}
-                              // to={`/freelancer-profile/6`}
+                            // to={`/freelancer-profile/6`}
                             >
                               <span className="font-bold text-md hover:underline cursor-pointer">
                                 {

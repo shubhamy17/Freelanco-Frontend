@@ -51,22 +51,22 @@ const LoginForm = ({ setWantsToLogin }) => {
     // const { account, chain } = await connectAsync({
     //   connector: new InjectedConnector(),
     // });
-
-    const userData = { address: address, chain: chain.id, network: "evm" };
-    // making a post request to our 'request-message' endpoint
-    const data = await requestMessage(userData);
-    const message = data.message;
-
-    // signing the received message via metamask
-    const signature = await signMessageAsync({ message });
-    const verification_data = { message, signature };
-    const result = await verifySignature(verification_data);
-
-    console.log(result.token);
-    //decrypt token and set user context
-    const token = result.token;
-    localStorage.setItem("token", token);
     try {
+      const userData = { address: address, chain: chain.id, network: "evm" };
+      // making a post request to our 'request-message' endpoint
+      const data = await requestMessage(userData);
+      const message = data.message;
+
+      // signing the received message via metamask
+      const signature = await signMessageAsync({ message });
+      const verification_data = { message, signature };
+      const result = await verifySignature(verification_data);
+
+      console.log(result.token);
+      //decrypt token and set user context
+      const token = result.token;
+      localStorage.setItem("token", token);
+
       // const decodedToken = jwt.verify(
       //   token,
       //   "MyUltraSecurePassWordIWontForgetToChange",
@@ -83,6 +83,13 @@ const LoginForm = ({ setWantsToLogin }) => {
     } catch (e) {
       setShowErrorDialog(true);
       setErrorMessage("You are not a member");
+      if (e.toString().includes("rejected")) {
+        setErrorMessage("User declined the action");
+      } else if (e.toString().includes("deadline")) {
+        setErrorMessage("Please select a date that is after today's date");
+      } else {
+        setErrorMessage(e.toString());
+      }
     }
     // console.log(jwt_decode(result.token));
   };

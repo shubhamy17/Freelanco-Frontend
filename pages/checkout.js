@@ -29,6 +29,7 @@ const checkout = () => {
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [txMessage, setTxMessage] = useState(undefined);
+  const [validationErrors, setValidationErrors] = useState("");
 
   const {
     register,
@@ -54,6 +55,45 @@ const checkout = () => {
   };
 
   const submit_proposal = async () => {
+    const errors = {};
+
+    if (!getValues("terms")) {
+      errors.terms = 'terms is required';
+    }
+
+    if (!getValues("freelancer_charges")) {
+      errors.charge = 'freelancer charges required';
+    }
+
+    const selectedDateString = getValues("deadline");
+
+    if (!selectedDateString) {
+      errors.deadline = "please mention deadline";
+    } else {
+      const selectedDate = new Date(selectedDateString);
+      const currentDate = new Date();
+      const selectedTimestamp = selectedDate.getTime();
+      const currentTimestamp = currentDate.getTime();
+      if (selectedTimestamp < currentTimestamp) {
+
+        errors.deadline = "please select a date that is on or after the current date";
+      }
+    } console.log(errors);
+
+    // if (!getValues("deadline")) {
+    //   errors.deadline = "please mention deadline";
+    // }
+    // if (getValues("deadline") && getValues("deadline") < new Date()) {
+    //   console.log("hii");
+    //   errors.deadline = "please select a date that is on or after the current date";
+    // }
+
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length != 0) {
+      return;
+    }
+
     const d = {
       ...data,
       client_ref: user?._id,
@@ -162,6 +202,10 @@ const checkout = () => {
               placeholder="Feel free to write your about your deal"
               rows={5}
             />
+            {validationErrors.terms && (
+              <span className="text-red-500">{validationErrors.terms}</span>
+            )}
+
           </div>
         </div>
         <div className="flex mt-7 flex-col items-end w-full space-y-6">
@@ -178,7 +222,11 @@ const checkout = () => {
               onChange={handleChange}
               className="mr-2  leading-4  placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             />
+
           </div>
+          {validationErrors.charge && (
+            <span className="text-red-500">{validationErrors.charge}</span>
+          )}
 
           <div className="flex justify-between w-full items-center">
             <p className="text-lg  leading-4 text-gray-600">
@@ -200,11 +248,15 @@ const checkout = () => {
               <input
                 {...register("deadline")}
                 type="date"
-                // selected={startDate}
-                // onChange={(date) => setStartDate(date)}
+              // selected={startDate}
+              // onChange={(date) => setStartDate(date)}
               />
             </div>
           </div>
+          {validationErrors.deadline && (
+            <span className="text-red-500">{validationErrors.deadline}</span>
+          )}
+
           <div className="flex justify-end w-full items-center">
             <span
               className={

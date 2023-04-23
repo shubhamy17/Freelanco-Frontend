@@ -10,6 +10,10 @@ import useGigs from "../hooks/useGigs";
 import { createGig } from "../api/gig";
 import { uploadImage, uploadJson } from "../api/ipfs";
 import axios from "axios";
+import { default as ReactSelect } from "react-select";
+import { components } from "react-select";
+import TxBox from "../components/Validation/TxBox";
+
 
 const CreateFreelancerPage = () => {
   const { user, isLogggedIn, gigContract, signer } = useAuth();
@@ -29,8 +33,13 @@ const CreateFreelancerPage = () => {
   const [subCategories, setSubCategories] = useState([]);
   const [isMinted, setIsMinted] = useState(false);
   const [imageUploaded, setImageUploaded] = useState(null);
-
+  const [submitted, setSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState("");
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+  const [showTxDialog, setShowTxDialog] = useState(false);
+  const [txMessage, setTxMessage] = useState(undefined);
+
+
 
   const {
     register,
@@ -42,6 +51,7 @@ const CreateFreelancerPage = () => {
     getValues,
     trigger,
     unregister,
+    values
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -60,13 +70,23 @@ const CreateFreelancerPage = () => {
     name: "skill",
   });
 
+  useEffect(() => {
+    if (categories) {
+      setValue("category", categories[0].title);
+      setValue("sub_category", categories[0]?.items[0]);
+      setSubCategories(categories[0]?.items);
+    }
+
+  }, [categories]);
+
   const [jsonURI, setURI] = useState(undefined);
 
   const setCat = (e) => {
-    setValue("sub_category", "");
+    // setValue("sub_category", "");
     const current_cat = e.target.value;
     const subCat = categories.filter((c) => c.title == current_cat);
     setSubCategories(subCat[0]?.items);
+    setValue("sub_category", subCat[0]?.items[0]);
   };
 
   const setShortTerm = () => {
@@ -106,11 +126,17 @@ const CreateFreelancerPage = () => {
   };
 
   const sendImageToBackend = async (selectedFile) => {
+    setShowTxDialog(true);
+    setTxMessage("image uploading to ipfs");
     const dataF = new FormData();
     dataF.append("file", selectedFile);
 
     const res = await uploadImage(dataF);
     setValue("ipfsImageHash", res.IpfsHash);
+    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setTimeout(() => {
+      setShowTxDialog(false);
+    }, 2000);
   };
 
   const sendJsonToBackend = async () => {
@@ -146,8 +172,114 @@ const CreateFreelancerPage = () => {
     }
   };
 
+
+
+
+  function handleValidation() {
+    const errors = {};
+
+    if (!getValues("title")) {
+      errors.title = 'Title is required';
+    }
+
+    if (!getValues("description")) {
+      errors.description = 'Description is required';
+    }
+
+    if (!getValues("category")) {
+      errors.category = 'Category is required';
+    }
+
+    if (!getValues("sub_category")) {
+      errors.sub_category = 'Sub category is required';
+    }
+
+    if (!getValues("ipfsImageHash")) {
+      errors.image = 'image is required';
+    }
+
+    if (Object.keys(errors).length == 0 && counter == 0) {
+      setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return;
+    }
+
+
+    if (getValues("plans")[0].price <= 0 || !getValues("plans")[0].package_description) {
+      errors.plans = `Basic package details are required`;
+    }
+
+    console.log("errors", errors);
+
+    if (Object.keys(errors).length == 0 && counter == 1) {
+      setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return;
+    }
+    if (getValues("skill").length < 2) {
+      errors.skill = `select at least 2 skills`;
+    }
+    if (Object.keys(errors).length == 0 && counter == 2) {
+      setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return;
+    }
+    if (!getValues("duration")) {
+      errors.duration = `select duration`;
+    }
+    if (Object.keys(errors).length == 0 && counter == 3) {
+      // setCounter((prevState) => prevState + 1);
+      setValidationErrors("");
+      return true;
+    }
+
+    setValidationErrors(errors);
+
+  }
+
+  const [skill, setSkill] = useState([]);
+
+  console.log("skill", skill);
+
+  const Option = (props) => {
+    return (
+      <div>
+        <components.Option {...props}>
+          <input
+            type="checkbox"
+            checked={props.isSelected}
+            onChange={() => null}
+          />{" "}
+          <label>{props.label}</label>
+        </components.Option>
+      </div>
+    );
+  };
+
+  const skillOptions = [
+    { value: "ReactJs", label: "ReactJs" },
+    { value: "AngularJs", label: "AngularJs" },
+    { value: "React Native", label: "React native" },
+    { value: "JavaScript", label: "JavaScript" },
+    { value: "Mongo", label: "Mongo" },
+  ];
+  function handleChange(selected) {
+    const skill_data = selected.map((s) => s.value);
+    setValue("skill", []); // Remove all items from the fields array
+    skill_data.forEach((skill) => {
+      append(skill); // Add new skill fields based on the selected skills
+    });
+  }
+
+
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-120px)] mt-20">
+      <TxBox
+        show={showTxDialog}
+        cancel={setShowTxDialog}
+        txMessage={txMessage}
+      // routeToPush={"/client-profile"}
+      />
       <div className="h-3/4 w-[calc(70vw)] border-2 border-gray-200 shadow-lg">
         <div className="h-16 w-full flex justify-start items-center border-b pl-8">
           <span className="font-light font-serif text-2xl">
@@ -178,10 +310,13 @@ const CreateFreelancerPage = () => {
                     </label>
                     <input
                       name="title"
-                      {...register("title")}
+                      {...register("title", { required: true })}
                       type="text"
                       className="mr-2 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
+                    {validationErrors.title && (
+                      <span className="text-red-500">{validationErrors.title}</span>
+                    )}
                     <label
                       htmlFor="description"
                       className="text-sm font-semibold text-gray-500"
@@ -193,6 +328,9 @@ const CreateFreelancerPage = () => {
                       {...register("description")}
                       className="mr-2 h-32 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
+                    {validationErrors.description && (
+                      <span className="text-red-500">{validationErrors.description}</span>
+                    )}
                     <label
                       htmlFor="title"
                       className="text-sm font-semibold text-gray-500"
@@ -217,6 +355,9 @@ const CreateFreelancerPage = () => {
                           </option>
                         ))}
                     </select>
+                    {validationErrors.category && (
+                      <span className="text-red-500">{validationErrors.category}</span>
+                    )}
 
                     <>
                       <label
@@ -240,6 +381,9 @@ const CreateFreelancerPage = () => {
                           </option>
                         ))}
                       </select>
+                      {validationErrors.sub_category && (
+                        <span className="text-red-500">{validationErrors.sub_category}</span>
+                      )}
                     </>
                   </form>
                 </div>
@@ -300,15 +444,20 @@ const CreateFreelancerPage = () => {
                         />
                       </label>
                     </div>
+                    {validationErrors.image && (
+                      <div className="text-red-500">{validationErrors.image}</div>
+                    )}
                   </div>
                 )}
               </div>
               <div className="flex w-full mt-5 justify-end items-end">
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8"
-                  onClick={() => {
-                    setCounter((prevState) => prevState + 1);
-                  }}
+                  onClick={handleValidation}
+                  // onClick={() => {
+
+                  //   setCounter((prevState) => prevState + 1);
+                  // }}
                   handleNFTUpload
                 >
                   Continue
@@ -318,6 +467,9 @@ const CreateFreelancerPage = () => {
           )}
           {counter === 1 && (
             <>
+              {validationErrors.plans && (
+                <span className="text-red-500">{validationErrors.plans}</span>
+              )}
               <div className="flex justify-between items-start w-full">
                 <div className="w-3/4">
                   <Packages
@@ -326,6 +478,7 @@ const CreateFreelancerPage = () => {
                     setValue={setValue}
                   />
                 </div>
+
                 <div className="max-w-[calc(20vw)] py-4 px-8 shadow-lg rounded-lg mt-2 bg-blue-100 flex-1/4">
                   <div>
                     <h2 className="text-gray-800 text-xl font-semibold">
@@ -359,9 +512,7 @@ const CreateFreelancerPage = () => {
                 </button>
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
-                  onClick={() => {
-                    setCounter((prevState) => prevState + 1);
-                  }}
+                  onClick={handleValidation}
                 >
                   Continue
                 </button>
@@ -371,7 +522,23 @@ const CreateFreelancerPage = () => {
           {counter === 2 && (
             <>
               <label className="block font-bold text-xl mb-2">Skills:</label>
-              <div className="flex flex-wrap">
+              <ReactSelect
+                options={skillOptions}
+                isMulti
+                closeMenuOnSelect={false}
+                hideSelectedOptions={false}
+                components={{
+                  Option,
+                }}
+                onChange={handleChange}
+                allowSelectAll={true}
+                value={skill.optionSelected}
+                className="block w-full bg-gray-200 text-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              />
+              {validationErrors.skill && (
+                <span className="text-red-500">{validationErrors.skill}</span>
+              )}
+              {/* <div className="flex flex-wrap">
                 {skills.map((skill, idx) => {
                   return (
                     <div
@@ -418,7 +585,7 @@ const CreateFreelancerPage = () => {
                     </div>
                   );
                 })}
-              </div>
+              </div> */}
               {/* <h1 className="font-bold text-xl mb-4"> Define Skills Used</h1>
               <div className="flex flex-wrap">
                 {skills.map((skill, idx) => {
@@ -478,9 +645,8 @@ const CreateFreelancerPage = () => {
                 </button>
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
-                  onClick={() => {
-                    setCounter((prevState) => prevState + 1);
-                  }}
+                  onClick={handleValidation}
+
                 >
                   Continue
                 </button>
@@ -542,6 +708,9 @@ const CreateFreelancerPage = () => {
                   </span>
                 </div>
               </div>
+              {validationErrors.duration && (
+                <span className="text-red-500">{validationErrors.duration}</span>
+              )}
 
               <div className="flex w-full h-20 justify-end items-end">
                 <button
@@ -559,25 +728,29 @@ const CreateFreelancerPage = () => {
                       : "bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white w-32"
                   }
                   onClick={async () => {
-                    await sendJsonToBackend();
-                    setShowSubmitDialog(true);
+                    const p = handleValidation();
+                    console.log("ppppppppppppppp", p);
+                    if (p) {
+                      await sendJsonToBackend();
+                      setShowSubmitDialog(true);
+                    }
                   }}
-                  // onClick={submitGig}
-                  // setLoading(true);
-                  // postJob({
-                  //   is_hourly: isHourlySelected ? "hourly" : "fixed",
-                  //   job_length: isShortTermSelected ? "short" : "long",
-                  //   title,
-                  //   description: jd,
-                  //   status: "open",
-                  //   budget: price,
-                  //   skills: skillsChosen,
-                  //   company_posted: user?._id,
-                  // }).then(() => {
-                  //   setLoading(false);
-                  //   navigate("/dashboard");
-                  // });
-                  // router.push("/seller");
+                // onClick={submitGig}
+                // setLoading(true);
+                // postJob({
+                //   is_hourly: isHourlySelected ? "hourly" : "fixed",
+                //   job_length: isShortTermSelected ? "short" : "long",
+                //   title,
+                //   description: jd,
+                //   status: "open",
+                //   budget: price,
+                //   skills: skillsChosen,
+                //   company_posted: user?._id,
+                // }).then(() => {
+                //   setLoading(false);
+                //   navigate("/dashboard");
+                // });
+                // router.push("/seller");
                 >
                   {/* <span className="" onClick={() => submitGig()}> */}
                   <span className="">Submit</span>
@@ -597,6 +770,7 @@ const CreateFreelancerPage = () => {
                     type="button"
                     class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
                     data-modal-hide="popup-modal"
+                    onClick={() => setShowSubmitDialog(false)}
                   >
                     <svg
                       aria-hidden="true"

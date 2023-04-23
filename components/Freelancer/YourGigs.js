@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import GigCard from "../Gigs/GigCard";
 import { getGigByUserId } from "../../api/gig";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const YourGigs = () => {
   const { user } = useAuth();
   const [userGigs, setUserGigs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
@@ -45,9 +47,9 @@ const YourGigs = () => {
       </div>
 
       <div className="flex flex-wrap gap-x-6 gap-y-6">
-        {userGigs?.map((gig, idx) => {
+        {userGigs.length > 0 ? userGigs?.map((gig, idx) => {
           return <GigCard gig={gig} key={idx} />;
-        })}
+        }) : <CircularProgress />}
       </div>
     </div>
   );

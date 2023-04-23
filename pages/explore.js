@@ -7,11 +7,13 @@ import useAuth from ".././hooks/useAuth";
 import Deck from "../components/Explore/Deck";
 import { getProposalsOfClient } from "../api/auth";
 import { getAllGig, getPopular } from "../api/gig";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const GigsListing = () => {
   const [recommendedGigs, setRecommendedGigs] = useState([]);
   const [mostPopular, setMostPopular] = useState([]);
   const [filteredGigs, setFilteredGigs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { user, search } = useAuth();
 
@@ -21,6 +23,7 @@ const GigsListing = () => {
       setMostPopular(
         res.filter((r) => r.freelancer.wallet_address !== user.wallet_address)
       );
+      setIsLoading(false);
     };
     if (user) getData();
   }, [user]);
@@ -45,11 +48,15 @@ const GigsListing = () => {
         </div>
       </div>
       <div className="px-20 transition ease-in-out delay-80 ">
-        <p className="text-2xl font-semibold">Most Popular Gigs</p>
-        <div className="flex flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
-          {filteredGigs.length > 0 ? (
+        <p className="text-2xl font-semibold mt-5 ml-5">Most Popular Gigs</p>
+        <div className="flex  flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
+          {isLoading ? (
+            // Display the loading component while data is being fetched
+              <CircularProgress />
+          ) : filteredGigs.length > 0 ? (
             filteredGigs.map((gig) => <GigCard key={gig._id} gig={gig} />)
           ) : (
+            // Display the empty state if no gigs are found
             <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col absoluteCenter">
               <img
                 src={"/empty.png"}
@@ -74,7 +81,7 @@ const GigsListing = () => {
           )}
         </div> */}
       </div>
-    </div>
+    </div >
   );
 };
 
