@@ -16,6 +16,7 @@ const YourGigs = () => {
         const result = await getGigByUserId();
         console.log("USER GIGS: ", result);
         setUserGigs(result.filter((obj) => obj.hasOwnProperty("tokenId")));
+        setIsLoading(false);
       }
     };
     getData();
@@ -47,9 +48,26 @@ const YourGigs = () => {
       </div>
 
       <div className="flex flex-wrap gap-x-6 gap-y-6">
-        {userGigs.length > 0 ? userGigs?.map((gig, idx) => {
-          return <GigCard gig={gig} key={idx} />;
-        }) : <CircularProgress />}
+        {isLoading ? (
+          <div className="min-h-[calc(70vh)] flex items-center mt-5 ml-5 flex-col">
+            <CircularProgress />
+          </div>
+        ) : userGigs.length > 0 ? (
+          userGigs.map((gig, idx) => <GigCard gig={gig} key={idx} />)
+        ) : (
+          <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col">
+            <img
+              src={"/empty.png"}
+              alt=""
+              className="w-1/4 h-1/4"
+              style={{
+                filter: "grayscale(1)",
+              }}
+            />
+            <p className="text-center text-gray-800 font-bold">No gigs found</p>
+          </div>
+        )}
+
       </div>
     </div>
   );

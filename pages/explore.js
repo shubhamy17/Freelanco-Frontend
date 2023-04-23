@@ -50,9 +50,9 @@ const GigsListing = () => {
       <div className="px-20 transition ease-in-out delay-80 ">
         <p className="text-2xl font-semibold mt-5 ml-5">Most Popular Gigs</p>
         <div className="flex  flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
-          {isLoading ? (
+          {isLoading && user ? (
             // Display the loading component while data is being fetched
-              <CircularProgress />
+            <CircularProgress />
           ) : filteredGigs.length > 0 ? (
             filteredGigs.map((gig) => <GigCard key={gig._id} gig={gig} />)
           ) : (

@@ -18,6 +18,7 @@ import TxBox from "../components/Validation/TxBox";
 import jwt_decode from "jwt-decode";
 import useGigs from "../hooks/useGigs";
 import { uploadImage } from "../api/ipfs";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const CreateFreelancerPage = () => {
   const { user, setUser, setToken } = useAuth();
@@ -59,7 +60,7 @@ const CreateFreelancerPage = () => {
   // const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { connectAsync } = useConnect();
+  const { connectAsync } = useConnect();  
   const { disconnectAsync } = useDisconnect();
   const { isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
@@ -67,6 +68,7 @@ const CreateFreelancerPage = () => {
   const [imageUploaded, setImageUploaded] = useState(null);
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [txMessage, setTxMessage] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   const [skill, setSkill] = useState([]);
@@ -150,7 +152,7 @@ const CreateFreelancerPage = () => {
     if (!getValues("occupation")) {
       errors.occupation = 'please mention your job role';
     }
-    if (getValues("description").split(" ").length < 20) {
+    if (getValues("description")?.split(" ").length < 20) {
       errors.description = 'write at least 20 words about you ';
     }
 
@@ -176,6 +178,7 @@ const CreateFreelancerPage = () => {
 
   const updateUser = async () => {
     try {
+      setIsLoading(true);
       const userData = { ...data, wallet_address: user?.wallet_address };
       const result = await addFreelancer(userData);
       // router.push("/seller");
@@ -437,8 +440,12 @@ const CreateFreelancerPage = () => {
           )}
           {counter === 2 && (
             <>
-              <label className="block font-bold text-xl mb-2">Skills:</label>
-              {/* {fields.map((item, index) => (
+              {isLoading ?
+                <div className="min-h-[calc(70vh)] flex items-center align-center justify-center mt-5 ml-5 w-full">
+                  <CircularProgress />
+                </div> : <>
+                  <label className="block font-bold text-xl mb-2">Skills:</label>
+                  {/* {fields.map((item, index) => (
         <div key={item.id} className="flex  mb-2">
           <select
             name={`skills[${index}].name`}
@@ -467,23 +474,25 @@ const CreateFreelancerPage = () => {
       >
         Add Skill
       </button> */}
-              <ReactSelect
-                options={skillOptions}
-                isMulti
-                closeMenuOnSelect={false}
-                hideSelectedOptions={false}
-                components={{
-                  Option,
-                }}
-                onChange={handleChange}
-                allowSelectAll={true}
-                value={skill.optionSelected}
-                className="block w-full bg-gray-200 text-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              />
-              {validationErrors.skill && (
-                <span className="text-red-500">{validationErrors.skill}</span>
-              )}
-              {/* <div className="flex flex-wrap">
+
+                  <ReactSelect
+                    options={skillOptions}
+                    isMulti
+                    closeMenuOnSelect={false}
+                    hideSelectedOptions={false}
+                    components={{
+                      Option,
+                    }}
+                    onChange={handleChange}
+                    allowSelectAll={true}
+                    value={skill.optionSelected}
+                    className="block w-full bg-gray-200 text-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  />
+                  {validationErrors.skill && (
+                    <span className="text-red-500">{validationErrors.skill}</span>
+                  )}
+
+                  {/* <div className="flex flex-wrap">
                 {skills.map((skill, idx) => {
                   return (
                     <div
@@ -532,32 +541,32 @@ const CreateFreelancerPage = () => {
                 })}
               </div> */}
 
-              <div className="flex w-full h-24 justify-end items-end">
-                <button
-                  className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 mr-2"
-                  onClick={() => {
-                    setCounter((prevState) => prevState - 1);
-                  }}
-                >
-                  Back
-                </button>
-                <button
-                  className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
-                // onClick={() => {
-                //   // setCounter((prevState) => prevState + 1);
-                //   updateUser();
-                // }}
-                  onClick={async () => {
-                    const p = handleValidation();
-                    console.log("ppppppppppppppp", p);
-                    if (p) {
-                      await updateUser(); 
-                    }
-                  }}
-                >
-                  Save & Continue
-                </button>
-              </div>
+                  <div className="flex w-full h-24 justify-end items-end">
+                    <button
+                      className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 mr-2"
+                      onClick={() => {
+                        setCounter((prevState) => prevState - 1);
+                      }}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
+                      // onClick={() => {
+                      //   // setCounter((prevState) => prevState + 1);
+                      //   updateUser();
+                      // }}
+                      onClick={async () => {
+                        const p = handleValidation();
+                        console.log("ppppppppppppppp", p);
+                        if (p) {
+                          await updateUser();
+                        }
+                      }}
+                    >
+                      Save & Continue
+                    </button>
+                  </div></>}
             </>
           )}
           {/* {counter === 3 && (

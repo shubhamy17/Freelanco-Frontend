@@ -5,6 +5,7 @@ import { useMoralis } from "react-moralis";
 import useAuth from "../../hooks/useAuth";
 // import Web3 from "web3";
 import { useRouter } from "next/router";
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
   useAccount,
@@ -27,6 +28,7 @@ const LoginForm = ({ setWantsToLogin }) => {
   const { signMessageAsync } = useSignMessage();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { chain } = useNetwork();
   const {
@@ -43,6 +45,7 @@ const LoginForm = ({ setWantsToLogin }) => {
   } = useAuth();
 
   const connectAndSign = async () => {
+    setIsLoading(true);
     //disconnects the web3 provider if it's already active
     // if (isConnected) {
     //   await disconnectAsync();
@@ -56,9 +59,10 @@ const LoginForm = ({ setWantsToLogin }) => {
       // making a post request to our 'request-message' endpoint
       const data = await requestMessage(userData);
       const message = data.message;
-
+      setIsLoading(false);
       // signing the received message via metamask
       const signature = await signMessageAsync({ message });
+      setIsLoading(true);
       const verification_data = { message, signature };
       const result = await verifySignature(verification_data);
 
@@ -108,11 +112,14 @@ const LoginForm = ({ setWantsToLogin }) => {
         Enter your credentials to access your account.
       </p>
       <form
-        className="flex flex-col mt-16"
+        className="flex flex-col mt-20"
         onSubmit={(e) => {
           e.preventDefault();
         }}
       >
+        {isLoading && <div className="flex  justify-center mt-5 ml-5 w-full">
+          <CircularProgress />
+        </div>}
         <label htmlFor="email" className="text-sm font-semibold text-gray-500">
           Wallet
         </label>
