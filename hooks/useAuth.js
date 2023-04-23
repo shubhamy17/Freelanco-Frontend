@@ -8,6 +8,7 @@ const {
   Gig_abi,
   Freelanco_abi,
   DaoNFT_abi,
+  whitelist_abi,
 } = require("../constants");
 const { ethers } = require("ethers");
 
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   const [freelancoContract, setFreelanco] = useState(undefined);
   const [gigContract, setGigContract] = useState(undefined);
   const [daoNFTContract, setDAONFT] = useState(undefined);
+  const [whitelistNFT, setWhitelistNFT] = useState(undefined);
   const [signer, setSigner] = useState(undefined);
   const [chainId, setChainID] = useState(undefined);
   const [network, setNetwork] = useState(undefined);
@@ -79,6 +81,15 @@ export const AuthProvider = ({ children }) => {
           signer
         );
         setDAONFT(DAONFT);
+      }
+
+      if (contractAddresses.Whitelist[window.ethereum.networkVersion][0]) {
+        const whitelist = new ethers.Contract(
+          contractAddresses["Whitelist"][window.ethereum.networkVersion][0],
+          whitelist_abi,
+          signer
+        );
+        setWhitelistNFT(whitelist);
       }
     }
   }
@@ -133,6 +144,7 @@ export const AuthProvider = ({ children }) => {
         freelancoContract,
         gigContract,
         daoNFTContract,
+        whitelistNFT,
         signer,
         network,
         chainId,
@@ -145,7 +157,7 @@ export const AuthProvider = ({ children }) => {
         isWrongNetwork,
         setIsWrongNetwork,
         search,
-        setSearch
+        setSearch,
       }}
     >
       {children}

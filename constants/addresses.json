@@ -26,5 +26,9 @@
       "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
     ],
     "80001": ["0x3c84d34bc15cf385b06C3e43b749518cF4Cb0cB5"]
+  },
+  "Whitelist": {
+    "31337": ["0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"],
+    "80001": ["0xb8473FcF51a227158ae773fe8AbeF29DbCEA04AE"]
   }
 }

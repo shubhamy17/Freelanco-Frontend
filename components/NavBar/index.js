@@ -47,13 +47,15 @@ const NavBar = () => {
   const isDarkPage =
     router.pathname === "/" ||
     router.pathname === "/dao" ||
-    router.pathname.includes("/dao-home");
+    router.pathname.includes("/dao-home") ||
+    router.pathname === "/join";
 
   const isSignInPage =
     router.pathname === "/login" ||
     router.pathname == "/dao-login" ||
     router.pathname == "/checkout" ||
-    router.pathname == "/freelancer";
+    router.pathname == "/freelancer" ||
+    router.pathname == "/join";
   const isSearchPage =
     router.pathname === "/gigs" || router.pathname == "/explore";
 
@@ -208,6 +210,12 @@ const NavBar = () => {
               <>
                 {!isLoggedIn ? (
                   <>
+                    <Link
+                      href="/join"
+                      className="font-light cursor-pointer text-sm mt-1"
+                    >
+                      Join
+                    </Link>
                     <a
                       href="https://freelancodao.gitbook.io/freelancodao/"
                       className="font-light cursor-pointer text-sm mt-1"

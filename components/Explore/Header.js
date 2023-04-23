@@ -1,4 +1,5 @@
 import React from "react";
+import { Button, Countdown } from "../landing/Home";
 // import openImg from "../assets/open.png";
 
 const Header = () => {
@@ -17,6 +18,7 @@ const Header = () => {
         }}
       >
         {/* Heading */}
+
         <div className="flex-col w-2/3 items-center pl-20">
           <h1 className="text-6xl font-serif font-light text-white">
             Find the most trusted{" "}
@@ -26,6 +28,9 @@ const Header = () => {
             </span>{" "}
             services <br /> for your business
           </h1>
+          <div className="mt-10">
+            <Button text={"Explore"} />
+          </div>
 
           {/* <div className="flex justify-start items-center my-2">
             <input
