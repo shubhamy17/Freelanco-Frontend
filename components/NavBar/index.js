@@ -40,10 +40,6 @@ const NavBar = () => {
 
   const { chain } = useNetwork();
 
-  console.log("C:", chain);
-  console.log("A:", address);
-  console.log("CHAINID: ", chainId);
-
   const isDarkPage =
     router.pathname === "/" ||
     router.pathname === "/dao" ||

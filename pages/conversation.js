@@ -16,11 +16,10 @@ const Conversation = () => {
 
   useEffect(() => {
     if (router.query) {
-      console.log("ROUTER:", router.query);
       const freelancer_address = router.query.address;
 
       const id = router.query.gig_id;
-      console.log("FRELANCER: ", freelancer_address);
+
       setFreelancerAddr(freelancer_address);
       setGigId(id);
     }
@@ -36,7 +35,6 @@ const Conversation = () => {
         { user_id: user?.wallet_address },
         (data) => {
           setConversationsData(data);
-          console.log("DATA: ", data);
 
           // setMessagesList(data);
         }
@@ -45,8 +43,6 @@ const Conversation = () => {
   }, [user, socket]);
 
   const getConversations = () => {
-    console.log("emiting2");
-
     if (!socket && user) {
       connectSocket(user.wallet_address);
     }
@@ -83,8 +79,6 @@ const Conversation = () => {
   }, [user, freelancerAddr, socket]);
 
   // console.log(conversationsData.filter((c) => c._id == selected));
-
-  console.log(conversationsData);
 
   return (
     <div className="flex-col mt-20 transition ease-in-out delay-80 w-full">

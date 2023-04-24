@@ -14,8 +14,6 @@ function Chat({ selected, conversations, to, freelancerData }) {
 
   const [freelancerAddr, setFreelancerAddr] = useState(null);
 
-  console.log("CONGO:", conversations);
-
   const initialState = {
     messages: conversations || [],
   };
@@ -37,10 +35,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
   useEffect(() => {
     if (router.query.address) {
       const freelancer_address = router.query.address;
-      console.log("FRELANCER: ", freelancer_address);
+
       setFreelancerAddr(freelancer_address);
     }
-  }, [router]);
+  }, [router, conversations]);
 
   const ref = useRef(null);
 
@@ -59,12 +57,9 @@ function Chat({ selected, conversations, to, freelancerData }) {
     }
   };
 
-  console.log("TP: ", to);
-
   useEffect(() => {
     if (socket) {
       socket.on("new_message", (data) => {
-        console.log("MESSAGE CAME");
         // Check if incoming data has a unique createdAt value
         if (selected === data.conversation_id) {
           // Update lastCreatedAt to current value
@@ -81,8 +76,6 @@ function Chat({ selected, conversations, to, freelancerData }) {
       }
     };
   }, []);
-
-  console.log("staete:S", state);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {

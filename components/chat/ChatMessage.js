@@ -16,8 +16,6 @@ function ChatMessage(props) {
 
   const { freelancerData } = props;
 
-  console.log("F", freelancerData);
-
   return (
     <ListItem
       sx={[
