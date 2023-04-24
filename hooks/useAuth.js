@@ -82,15 +82,15 @@ export const AuthProvider = ({ children }) => {
         );
         setDAONFT(DAONFT);
       }
+    }
+    if (contractAddresses.Whitelist[window?.ethereum?.networkVersion]?.[0]) {
+      const whitelist = new ethers.Contract(
+        contractAddresses["Whitelist"][window.ethereum.networkVersion][0],
+        whitelist_abi,
+        signer
+      );
 
-      if (contractAddresses.Whitelist[window.ethereum.networkVersion][0]) {
-        const whitelist = new ethers.Contract(
-          contractAddresses["Whitelist"][window.ethereum.networkVersion][0],
-          whitelist_abi,
-          signer
-        );
-        setWhitelistNFT(whitelist);
-      }
+      setWhitelistNFT(whitelist);
     }
   }
 

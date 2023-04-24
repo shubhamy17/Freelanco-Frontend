@@ -29,6 +29,6 @@
   },
   "Whitelist": {
     "31337": ["0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e"],
-    "80001": ["0xb8473FcF51a227158ae773fe8AbeF29DbCEA04AE"]
+    "137": ["0xb8473FcF51a227158ae773fe8AbeF29DbCEA04AE"]
   }
 }

@@ -6,6 +6,7 @@ import useAuth from "../../hooks/useAuth";
 
 import ErrorBox from "../Validation/ErrorBox";
 import TxBox from "../Validation/TxBox";
+import { useNetwork } from "wagmi";
 
 export function Countdown() {
   const [countdown, setCountdown] = useState({});
@@ -63,6 +64,7 @@ export function Countdown() {
 
 export const Button = ({ text }) => {
   const { whitelistNFT, chainId, signer } = useAuth();
+  const { chain } = useNetwork();
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showTxDialog, setShowTxDialog] = useState(false);
@@ -93,7 +95,7 @@ export const Button = ({ text }) => {
               "_blank"
             );
           } else {
-            if (chainId != 137) {
+            if (chain.id != 137) {
               setErrorMessage("Please connect to Polygon Mainnet");
               setShowErrorDialog(true);
             } else {
