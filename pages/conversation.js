@@ -28,6 +28,7 @@ const Conversation = () => {
   const [selected, setSelected] = useState(null);
   const [conversationsData, setConversationsData] = useState(null);
 
+
   useEffect(() => {
     if (user && socket) {
       socket.emit(
@@ -43,9 +44,9 @@ const Conversation = () => {
   }, [user, socket]);
 
   const getConversations = () => {
-    if (!socket && user) {
-      connectSocket(user.wallet_address);
-    }
+    // if (!socket && user) {
+    //   connectSocket(user.wallet_address);
+    // }
 
     if (user && socket) {
       socket.emit(
@@ -62,21 +63,33 @@ const Conversation = () => {
   };
 
   useEffect(() => {
-    if (!socket && user) {
+    console.log(socket, "socket1");
+    if (!socket && !socket?.connected && user) {
+      console.log("connecting.....");
       connectSocket(user.wallet_address);
     }
-    if (socket && user && freelancerAddr) {
+  }, [user, socket]);
+
+  useEffect(() => {
+    console.log(socket, "socket2");
+    if (socket && socket.connected && user && freelancerAddr) {
+      console.log("emitting", user, freelancerAddr);
       socket.emit("start_conversation", {
         from: user?.wallet_address,
         to: freelancerAddr,
         gig_token_id: gigId,
-      });
+      }
+      , (data) => {
+        console.log("strat convo data", data);
+        // setConversationsData(data);
+      }
+      );
       // socket.on("new_message", (data) => {
       //   // const message = data.message;
-      //   console.log("current_conversation------->", data);
+      //   console.log("current_conversation------->", data); 
       // });
     }
-  }, [user, freelancerAddr, socket]);
+  }, [user, freelancerAddr, socket, socket?.connected]);
 
   // console.log(conversationsData.filter((c) => c._id == selected));
 

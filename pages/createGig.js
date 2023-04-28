@@ -7,12 +7,12 @@ import loadingGif from "../public/walk.gif";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
 import useGigs from "../hooks/useGigs";
-import { createGig } from "../api/gig";
 import { uploadImage, uploadJson } from "../api/ipfs";
 import axios from "axios";
 import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import TxBox from "../components/Validation/TxBox";
+import { createGig } from "../api/gig";
 
 
 const CreateFreelancerPage = () => {
@@ -140,11 +140,11 @@ const CreateFreelancerPage = () => {
   };
 
   const sendJsonToBackend = async () => {
-    const new_data = { ...data, wallet_address: user?.wallet_address };
-
+    setValue("wallet_address", user?.wallet_address);
     try {
-      const res = await uploadJson(new_data);
+      const res = await uploadJson(data);
       console.log("NFT URI: ", res.IpfsHash);
+      setValue("tokenUri", res.IpfsHash);
       setURI(res.IpfsHash);
       setIsMinted(true);
     } catch (e) {
@@ -152,17 +152,20 @@ const CreateFreelancerPage = () => {
     }
   };
 
-  const contractCall = async (uri) => {
+  const contractCall = async () => {
     let contractWithSigner = gigContract.connect(signer);
+    await createGig(data);
     if (isMinted) {
       try {
         console.log("gIG:", contractWithSigner);
         let tx = await contractWithSigner.safeMint(jsonURI, {
           gasLimit: 500000,
         });
-        await tx.wait();
+        await tx.wait(6);
         console.log(tx);
         setIsMinted(false);
+        console.log("storing in db");
+
         router.push("/seller");
       } catch (err) {
         console.log(err);

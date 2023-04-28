@@ -9,7 +9,7 @@ import Image from "next/image";
 function Chat({ selected, conversations, to, freelancerData }) {
   const { user } = useAuth();
   const router = useRouter();
-
+  const refc = useRef();
   const [messageState, setMessage] = useState("");
 
   const [freelancerAddr, setFreelancerAddr] = useState(null);
@@ -17,6 +17,11 @@ function Chat({ selected, conversations, to, freelancerData }) {
   const initialState = {
     messages: conversations || [],
   };
+  useEffect(() => {
+    if (conversations) {
+      dispatch({ type: "SET_INITIAL_MESSAGES", payload: conversations });
+    }
+  }, [conversations])
 
   const reducer = (state, action) => {
     switch (action.type) {
@@ -24,6 +29,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
         return {
           ...state,
           messages: [...state.messages, action.payload],
+        };
+      case "SET_INITIAL_MESSAGES":
+        return {
+          messages: action.payload,
         };
       default:
         return state;
@@ -63,7 +72,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
         // Check if incoming data has a unique createdAt value
         if (selected === data.conversation_id) {
           // Update lastCreatedAt to current value
-
+          refc.current.scrollTop = refc.current.scrollHeight;
           dispatch({ type: "ADD_MESSAGE", payload: data.message });
         }
       });
@@ -75,7 +84,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
         socket.off("new_message");
       }
     };
-  }, []);
+  }, [selected]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -132,6 +141,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
         )}
       </div>
       <List
+        ref={refc}
         sx={{
           height: { xs: "79vh", sm: "79vh", md: "84vh" },
           overflowY: "auto",

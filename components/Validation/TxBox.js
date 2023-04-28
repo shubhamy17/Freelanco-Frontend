@@ -30,17 +30,17 @@ const TxBox = ({ cancel, show, txMessage, routeToPush }) => {
     }
   }, 500);
 
-  useEffect(() => {
-    const timeId = setTimeout(() => {
-      // After 3 seconds set the show value to false
-      cancel(false);
-      if (routeToPush) router.push(routeToPush);
-    }, 50000);
+  // useEffect(() => {
+  //   const timeId = setTimeout(() => {
+  //     // After 3 seconds set the show value to false
+  //     cancel(false);
+  //     if (routeToPush) router.push(routeToPush);
+  //   }, 50000);
 
-    return () => {
-      clearTimeout(timeId);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timeId);
+  //   };
+  // }, []);
 
   return (
     <div

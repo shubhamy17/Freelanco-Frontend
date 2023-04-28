@@ -129,6 +129,8 @@ const checkout = () => {
       setTxMessage(tx.hash);
       setShowTxDialog(true);
       await tx.wait(6);
+      setShowTxDialog(false);
+      router.push("/client-profile");
       console.log("TX: RECEIPT OBJECT:", tx);
       setTxMessage(tx.hash);
     } catch (e) {
@@ -167,7 +169,7 @@ const checkout = () => {
         show={showTxDialog}
         cancel={setShowTxDialog}
         txMessage={txMessage}
-        routeToPush={"/client-profile"}
+      // routeToPush={"/client-profile"}
       />
       <div className="flex justify-start items-start bg-gray-50 w-full p-14 pt-20 px-40">
         <div className="w-full flex-col justify-start items-start mr-10">
