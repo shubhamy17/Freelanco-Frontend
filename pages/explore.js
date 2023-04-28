@@ -21,11 +21,16 @@ const GigsListing = () => {
     const getData = async () => {
       const res = await getPopular();
       setMostPopular(
-        res.filter((r) => r.freelancer.wallet_address !== user.wallet_address)
+        res.filter((r) => {
+          if (user) { return r.freelancer.wallet_address !== user.wallet_address }
+          else {
+            return r;
+          }
+        })
       );
       setIsLoading(false);
     };
-    if (user) getData();
+    getData();
   }, [user]);
 
   useEffect(() => {

@@ -13,6 +13,7 @@ import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import TxBox from "../components/Validation/TxBox";
 import { createGig } from "../api/gig";
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 const CreateFreelancerPage = () => {
@@ -38,6 +39,7 @@ const CreateFreelancerPage = () => {
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [txMessage, setTxMessage] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
 
 

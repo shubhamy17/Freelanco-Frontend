@@ -42,6 +42,7 @@ const LoginForm = ({ setWantsToLogin }) => {
     setAsSeller,
     chainId,
     isWrongNetwork,
+    setValues
   } = useAuth();
 
   const connectAndSign = async () => {
@@ -83,6 +84,7 @@ const LoginForm = ({ setWantsToLogin }) => {
       setToken(result.token);
       setUser(decodedToken.data.user);
       console.log(user);
+      setValues();
       router.push("/explore");
     } catch (e) {
       setShowErrorDialog(true);

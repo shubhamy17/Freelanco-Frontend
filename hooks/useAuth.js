@@ -158,6 +158,7 @@ export const AuthProvider = ({ children }) => {
         setIsWrongNetwork,
         search,
         setSearch,
+        setValues
       }}
     >
       {children}
