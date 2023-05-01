@@ -5,13 +5,24 @@ import GigActions from "../components/Gigs/GigActions";
 import GigDetails from "../components/Gigs/GigDetails";
 import GigManagement from "../components/Gigs/GigManagement";
 import useAuth from "../hooks/useAuth";
+import { getGigById } from "../api/gig";
 
 const GigDetail = () => {
   const router = useRouter();
-  let gig = {};
+  let gigId = {};
   if (router.query.gig) {
-    gig = JSON.parse(router.query.gig);
+    gigId = JSON.parse(router.query.gig);
   }
+  const [gig, setGig] = useState({});
+  useEffect(() => {
+    async function fetchGig() {
+      if (gigId) {
+        const gigData = await getGigById(gigId);
+        setGig(gigData);
+      }
+    }
+    fetchGig();
+  }, [gigId]);
   const { user } = useAuth();
 
   const isMyGig = user?._id == gig?.user_ref;
@@ -21,14 +32,14 @@ const GigDetail = () => {
       {!isMyGig && (
         <div className="flex mx-20 mt-20">
           <div className="flex-3/4 w-3/4">
-            <GigDetails />
+            <GigDetails gig={gig} />
           </div>
           <div className="flex-1/4 w-1/4">
-            <GigActions />
+            <GigActions gig={gig} />
           </div>
         </div>
       )}
-      {isMyGig && <GigManagement gig={gig} />}
+      {isMyGig && gig != {} && <GigManagement gig={gig} />}
     </>
   );
 };
