@@ -1,33 +1,34 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { getDate } from "../../utils/helpers";
+import { getGigById } from "../../api/gig";
 import { useRouter } from "next/router";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import { constSelector } from "recoil";
 
 const Slider = () => {
   return <div>Slider</div>;
 };
 
-const job = {
-  title: "This is my title",
-  createdAt: "Today",
-  skills: [{ name: "Python" }, { name: "JavaScript" }],
-  description:
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-  job_length: "short",
-  earnedFromGig: "50",
-  user: "0x",
-};
 
-const GigDetails = () => {
+
+const GigDetails = ({ gig }) => {
   const router = useRouter();
-  let gig = {};
-  if (router.query.gig) {
-    gig = JSON.parse(router.query.gig);
-  }
-
-  console.log("gig", gig);
+  // let gigId = {};
+  // if (router.query.gig) {
+  //   gigId = JSON.parse(router.query.gig);
+  // }
+  // const [gig, setGig] = useState({});
+  // useEffect(() => {
+  //   async function fetchGig() {
+  //     if (gigId) {
+  //       const gigData = await getGigById(gigId);
+  //       setGig(gigData);
+  //     }
+  //   }
+  //   fetchGig();
+  // }, [gigId]);
 
   const { user } = useAuth();
 

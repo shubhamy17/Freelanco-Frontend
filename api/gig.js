@@ -23,7 +23,7 @@ export const getAllGig = () =>
 export const getPopular = () =>
   new Promise((resolve, reject) => {
     axiosInstance
-      .get(`/gigs/popularGigs`)
+      .get(`/gigs/popularGigs/all`)
       .then((res) => {
         resolve(res.data);
       })
@@ -33,7 +33,7 @@ export const getPopular = () =>
 export const getGigByUserId = () =>
   new Promise((resolve, reject) => {
     axiosInstance
-      .get(`/gigs/getGigsByUserId`)
+      .post(`/gigs/getGigsByUserId`)
       .then((res) => {
         resolve(res.data);
       })
@@ -60,3 +60,15 @@ export const updateRating = (id, data) =>
       })
       .catch((err) => reject(err));
   });
+
+export const getGigById = (id) =>
+  new Promise((resolve, reject) => {
+    axiosInstance
+      .get(`/gigs/${id}`)
+      .then((res) => {
+        resolve(res.data);
+        console.log("rating--->", res.data);
+      })
+      .catch((err) => reject(err));
+  });
+

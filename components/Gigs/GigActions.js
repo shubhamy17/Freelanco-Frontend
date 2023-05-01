@@ -80,12 +80,12 @@ const Basic = ({ gig, tabSelected }) => {
   );
 };
 
-const GigActions = () => {
-  const router = useRouter();
-  let gig = {};
-  if (router.query.gig) {
-    gig = JSON.parse(router.query.gig);
-  }
+const GigActions = ({ gig }) => {
+  // const router = useRouter();
+  // let gig = {};
+  // if (router.query.gig) {
+  //   gig = JSON.parse(router.query.gig);
+  // }
 
   const [tabSelected, setSelected] = useState(0);
   const { user, isLoggedIn } = useAuth();

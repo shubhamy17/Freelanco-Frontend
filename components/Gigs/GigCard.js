@@ -54,7 +54,7 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
           onClick={() =>
             router.push({
               pathname: "/gig-detail",
-              query: { gig: JSON.stringify(gig) },
+              query: { gig: JSON.stringify(gig._id) },
             })
           }
         />
@@ -86,7 +86,7 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
           onClick={() => {
             router.push({
               pathname: "/gig-detail",
-              query: { gig: JSON.stringify(gig) },
+              query: { gig: JSON.stringify(gig._id) },
             });
           }}
         >
