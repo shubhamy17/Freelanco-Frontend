@@ -5,6 +5,46 @@ import { socket } from "../../socket";
 import ChatMessage from "./ChatMessage";
 import { Box, Fab, List, TextField, Typography } from "@mui/material";
 import Image from "next/image";
+import { MessageLeft, MessageRight } from "./Message";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import TextInput from "./TextInput";
+
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    paper: {
+      width: "80vw",
+      height: "80vh",
+      maxWidth: "500px",
+      maxHeight: "700px",
+      display: "flex",
+      alignItems: "center",
+      flexDirection: "column",
+      position: "relative"
+    },
+    paper2: {
+      width: "80vw",
+      maxWidth: "500px",
+      display: "flex",
+      alignItems: "center",
+      flexDirection: "column",
+      position: "relative"
+    },
+    container: {
+      width: "100vw",
+      height: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    messagesBody: {
+      width: "calc( 100% - 20px )",
+      margin: 10,
+      overflowY: "scroll",
+      height: "calc( 100% - 80px )"
+    }
+  })
+);
 
 function Chat({ selected, conversations, to, freelancerData }) {
   const { user } = useAuth();
@@ -95,7 +135,8 @@ function Chat({ selected, conversations, to, freelancerData }) {
   };
 
   return (
-    <div className="shadow">
+    // <div className="shadow ">
+    <>
       <div className="w-full ">
         {freelancerData ? (
           <div class="flex items-center  bg-white cursor-pointer px-2 w-full">
@@ -152,13 +193,33 @@ function Chat({ selected, conversations, to, freelancerData }) {
           <>
             {state.messages.map((message, id) => {
               return (
-                <ChatMessage
-                  key={id}
-                  message={message.text}
-                  date={message.date}
-                  sentByMe={message.from == user?.wallet_address}
-                  freelancerData={freelancerData}
-                />
+                // <ChatMessage
+                //   key={id}
+                //   message={message.text}
+                //   date={message.date}
+                //   sentByMe={message.from == user?.wallet_address}
+                //   freelancerData={freelancerData}
+                // />
+                <>
+                  {message.from != user?.wallet_address &&
+                    <MessageLeft
+                      message={message.text}
+                      timestamp={message.date}
+                      photoURL={"https://ipfs.io/ipfs/" + freelancerData?.ipfsImageHash}
+                      // displayName={freelancerData?.name}
+                      avatarDisp={true}
+                    />}
+
+                  {message.from == user?.wallet_address &&
+                    <MessageRight
+                      message={message.text}
+                      timestamp={message.date}
+                      photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
+                      // displayName="まさりぶ"
+                      avatarDisp={true}
+                    />
+                  }
+                </>
               );
             })}
 
@@ -168,13 +229,33 @@ function Chat({ selected, conversations, to, freelancerData }) {
           <>
             {conversations.map((message, id) => {
               return (
-                <ChatMessage
-                  key={id}
-                  message={message.text}
-                  date={message.date}
-                  sentByMe={message.from == user.wallet_address}
-                  freelancerData={freelancerData}
-                />
+                // <ChatMessage
+                //   key={id}
+                //   message={message.text}
+                //   date={message.date}
+                //   sentByMe={message.from == user.wallet_address}
+                //   freelancerData={freelancerData}
+                // />
+                <>
+                  {message.from != user?.wallet_address &&
+                    <MessageLeft
+                      message={message.text}
+                      timestamp={message.date}
+                      photoURL={"https://ipfs.io/ipfs/" + freelancerData?.ipfsImageHash}
+                      // displayName={freelancerData?.name}
+                      avatarDisp={true}
+                    />}
+
+                  {message.from == user?.wallet_address &&
+                    <MessageRight
+                      message={message.text}
+                      timestamp={message.date}
+                      photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
+                      // displayName="まさりぶ"
+                      avatarDisp={true}
+                    />
+                  }
+                </>
               );
             })}
           </>
@@ -238,7 +319,8 @@ function Chat({ selected, conversations, to, freelancerData }) {
           </Box>
         </Box>
       </div>
-    </div>
+    </>
+    // </div>
   );
 }
 

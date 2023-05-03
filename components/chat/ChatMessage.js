@@ -55,13 +55,13 @@ function ChatMessage(props) {
               ></ListItemText>
             )}
           </Box>
-
+{/* 
           <ListItemIcon sx={{ ml: 2 }}>
             {props.proposalDetailPage ? (
               props.from.slice(0, 24)
             ) : (
               <Image
-                className="rounded-3xl h-12 my-2 max-h-sm mr-3"
+                className="rounded-3xl my-2 max-h-sm mr-3"
                 src={
                   freelancerData != null
                     ? props.from == freelancerData.wallet_address
@@ -72,11 +72,11 @@ function ChatMessage(props) {
                     : "https://ipfs.io/ipfs/" + user?.freelancer.ipfsImageHash
                 }
                 alt="product image"
-                width={50}
-                height={50}
+                width={20}
+                height={20}
               />
             )}
-          </ListItemIcon>
+          </ListItemIcon> */}
         </Box>
       ) : (
         <Box
