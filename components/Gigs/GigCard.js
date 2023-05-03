@@ -7,30 +7,30 @@ import axios from "axios";
 export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
   const [isHover, setIsHover] = useState();
   const router = useRouter();
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
 
   const colorChangeClass = isHover ? "text-blue-800" : "text-black";
 
-  const getData = () => {
-    const getDataFromIPFS = async () => {
-      try {
-        console.log("URI:", "https://ipfs.io/" + gig.tokenUri);
-        const json = await axios.get("https://ipfs.io/ipfs/" + gig.tokenUri);
-        console.log("json: ", json);
-        setImage("https://ipfs.io/ipfs/" + json.data.image.substring(7));
-      } catch (e) {
-        console.log("JSONL ", e);
-      }
-    };
-    getDataFromIPFS();
-  };
+  // const getData = () => {
+  //   const getDataFromIPFS = async () => {
+  //     try {
+  //       console.log("URI:", "https://ipfs.io/" + gig.tokenUri);
+  //       const json = await axios.get("https://ipfs.io/ipfs/" + gig.tokenUri);
+  //       console.log("json: ", json);
+  //       setImage("https://ipfs.io/ipfs/" + json.data.image.substring(7));
+  //     } catch (e) {
+  //       console.log("JSONL ", e);
+  //     }
+  //   };
+  //   getDataFromIPFS();
+  // };
 
-  useEffect(() => {
-    if (gig.tokenUri) {
-      console.log("GIGCARD: ", gig);
-      getData();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (gig.tokenUri) {
+  //     console.log("GIGCARD: ", gig);
+  //     getData();
+  //   }
+  // }, []);
 
   return (
     <div
@@ -41,10 +41,10 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}
     >
-      {image && (
+      {gig?.awsImageLink && (
         <Image
           className="rounded-t-lg cursor-pointer"
-          src={image}
+          src={gig?.awsImageLink}
           alt="product image"
           width={500}
           height={500}
@@ -63,10 +63,11 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
       <div className="flex justify-start items-center">
         <Image
           className="rounded-3xl m-4 max-h-sm"
-          src={"https://ipfs.io/ipfs/" + gig?.freelancer?.ipfsImageHash}
+          // src={"https://ipfs.io/ipfs/" + gig?.freelancer?.ipfsImageHash}
+          src={gig?.freelancer?.awsImageLink}
           alt="product image"
-          width={50}
-          height={50}
+          width={20}
+          height={20}
         />
         <div className="flex-col">
           <p className="font-bold text-md hover:underline cursor-pointer">

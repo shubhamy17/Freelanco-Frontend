@@ -133,13 +133,14 @@ const YourProfile = ({
     <div className="border shadow-lg">
       {!router.query.freelancer && (
         <div className="flex justify-center items-center h-32 flex-col">
-          {currentFreelancerData?.ipfsImageHash && (
+          {currentFreelancerData?.awsImageLink && (
             <Image
-              src={
-                "https://ipfs.io/ipfs/" +
-                (currentFreelancerData?.ipfsImageHash ||
-                  user?.freelancer?.ipfsImageHash)
-              }
+              src={currentFreelancerData?.awsImageLink}
+              // {
+              //   "https://ipfs.io/ipfs/" +
+              //   (currentFreelancerData?.ipfsImageHash ||
+              //     user?.freelancer?.ipfsImageHash)
+              // }
               width={100}
               height={100}
               alt=""
