@@ -13,11 +13,11 @@ import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import TxBox from "../components/Validation/TxBox";
 import { createGig } from "../api/gig";
-import CircularProgress from '@mui/material/CircularProgress';
-
+import CircularProgress from "@mui/material/CircularProgress";
 
 const CreateFreelancerPage = () => {
-  const { user, isLogggedIn, gigContract, signer } = useAuth();
+  const { user, isLogggedIn, gigContract, signer, setValues, isConnected } =
+    useAuth();
   const { categories } = useGigs();
 
   const router = useRouter();
@@ -41,8 +41,6 @@ const CreateFreelancerPage = () => {
   const [txMessage, setTxMessage] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
-
-
   const {
     register,
     control,
@@ -53,7 +51,7 @@ const CreateFreelancerPage = () => {
     getValues,
     trigger,
     unregister,
-    values
+    values,
   } = useForm({
     mode: "onChange",
     defaultValues: {
@@ -78,7 +76,6 @@ const CreateFreelancerPage = () => {
       setValue("sub_category", categories[0]?.items[0]);
       setSubCategories(categories[0]?.items);
     }
-
   }, [categories]);
 
   const [jsonURI, setURI] = useState(undefined);
@@ -155,52 +152,57 @@ const CreateFreelancerPage = () => {
   };
 
   const contractCall = async () => {
-    let contractWithSigner = gigContract.connect(signer);
-    await createGig(data);
-    if (isMinted) {
-      try {
-        console.log("gIG:", contractWithSigner);
-        let tx = await contractWithSigner.safeMint(jsonURI, {
-          gasLimit: 500000,
-        });
-        await tx.wait(6);
-        console.log(tx);
-        setIsMinted(false);
-        console.log("storing in db");
+    new Promise(async (res, rej) => {
+      await setValues();
+      res();
+    }).then(async () => {
+      let contractWithSigner = gigContract.connect(signer);
 
-        router.push("/seller");
-      } catch (err) {
-        console.log(err);
+      if (isMinted) {
+        try {
+          let tx = await contractWithSigner.safeMint(jsonURI, {
+            gasLimit: 500000,
+          });
+          try {
+            await createGig(data);
+          } catch (e) {
+            console.log("Unable to create gig due to: ", e.toString());
+          }
+          await tx.wait();
+
+          setIsMinted(false);
+
+          router.push("/seller");
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        console.log("NOT MINTED");
       }
-    } else {
-      console.log("NOT MINTED");
-    }
+    });
   };
-
-
-
 
   function handleValidation() {
     const errors = {};
 
     if (!getValues("title")) {
-      errors.title = 'Title is required';
+      errors.title = "Title is required";
     }
 
     if (!getValues("description")) {
-      errors.description = 'Description is required';
+      errors.description = "Description is required";
     }
 
     if (!getValues("category")) {
-      errors.category = 'Category is required';
+      errors.category = "Category is required";
     }
 
     if (!getValues("sub_category")) {
-      errors.sub_category = 'Sub category is required';
+      errors.sub_category = "Sub category is required";
     }
 
     if (!getValues("ipfsImageHash")) {
-      errors.image = 'image is required';
+      errors.image = "image is required";
     }
 
     if (Object.keys(errors).length == 0 && counter == 0) {
@@ -209,8 +211,10 @@ const CreateFreelancerPage = () => {
       return;
     }
 
-
-    if (getValues("plans")[0].price <= 0 || !getValues("plans")[0].package_description) {
+    if (
+      getValues("plans")[0].price <= 0 ||
+      !getValues("plans")[0].package_description
+    ) {
       errors.plans = `Basic package details are required`;
     }
 
@@ -239,7 +243,6 @@ const CreateFreelancerPage = () => {
     }
 
     setValidationErrors(errors);
-
   }
 
   const [skill, setSkill] = useState([]);
@@ -276,14 +279,13 @@ const CreateFreelancerPage = () => {
     });
   }
 
-
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-120px)] mt-20">
       <TxBox
         show={showTxDialog}
         cancel={setShowTxDialog}
         txMessage={txMessage}
-      // routeToPush={"/client-profile"}
+        // routeToPush={"/client-profile"}
       />
       <div className="h-3/4 w-[calc(70vw)] border-2 border-gray-200 shadow-lg">
         <div className="h-16 w-full flex justify-start items-center border-b pl-8">
@@ -320,7 +322,9 @@ const CreateFreelancerPage = () => {
                       className="mr-2 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 h-12 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
                     {validationErrors.title && (
-                      <span className="text-red-500">{validationErrors.title}</span>
+                      <span className="text-red-500">
+                        {validationErrors.title}
+                      </span>
                     )}
                     <label
                       htmlFor="description"
@@ -334,7 +338,9 @@ const CreateFreelancerPage = () => {
                       className="mr-2 h-32 placeholder:italic placeholder:text-slate-400 block bg-gray-100 bg-opacity-5 my-2 border border-slate-300 rounded-md py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                     />
                     {validationErrors.description && (
-                      <span className="text-red-500">{validationErrors.description}</span>
+                      <span className="text-red-500">
+                        {validationErrors.description}
+                      </span>
                     )}
                     <label
                       htmlFor="title"
@@ -361,7 +367,9 @@ const CreateFreelancerPage = () => {
                         ))}
                     </select>
                     {validationErrors.category && (
-                      <span className="text-red-500">{validationErrors.category}</span>
+                      <span className="text-red-500">
+                        {validationErrors.category}
+                      </span>
                     )}
 
                     <>
@@ -387,7 +395,9 @@ const CreateFreelancerPage = () => {
                         ))}
                       </select>
                       {validationErrors.sub_category && (
-                        <span className="text-red-500">{validationErrors.sub_category}</span>
+                        <span className="text-red-500">
+                          {validationErrors.sub_category}
+                        </span>
                       )}
                     </>
                   </form>
@@ -450,7 +460,9 @@ const CreateFreelancerPage = () => {
                       </label>
                     </div>
                     {validationErrors.image && (
-                      <div className="text-red-500">{validationErrors.image}</div>
+                      <div className="text-red-500">
+                        {validationErrors.image}
+                      </div>
                     )}
                   </div>
                 )}
@@ -651,7 +663,6 @@ const CreateFreelancerPage = () => {
                 <button
                   className="bg-blue-300 p-4 shadow-sm rounded-3xl text-md text-white px-8 "
                   onClick={handleValidation}
-
                 >
                   Continue
                 </button>
@@ -714,7 +725,9 @@ const CreateFreelancerPage = () => {
                 </div>
               </div>
               {validationErrors.duration && (
-                <span className="text-red-500">{validationErrors.duration}</span>
+                <span className="text-red-500">
+                  {validationErrors.duration}
+                </span>
               )}
 
               <div className="flex w-full h-20 justify-end items-end">
@@ -740,22 +753,22 @@ const CreateFreelancerPage = () => {
                       setShowSubmitDialog(true);
                     }
                   }}
-                // onClick={submitGig}
-                // setLoading(true);
-                // postJob({
-                //   is_hourly: isHourlySelected ? "hourly" : "fixed",
-                //   job_length: isShortTermSelected ? "short" : "long",
-                //   title,
-                //   description: jd,
-                //   status: "open",
-                //   budget: price,
-                //   skills: skillsChosen,
-                //   company_posted: user?._id,
-                // }).then(() => {
-                //   setLoading(false);
-                //   navigate("/dashboard");
-                // });
-                // router.push("/seller");
+                  // onClick={submitGig}
+                  // setLoading(true);
+                  // postJob({
+                  //   is_hourly: isHourlySelected ? "hourly" : "fixed",
+                  //   job_length: isShortTermSelected ? "short" : "long",
+                  //   title,
+                  //   description: jd,
+                  //   status: "open",
+                  //   budget: price,
+                  //   skills: skillsChosen,
+                  //   company_posted: user?._id,
+                  // }).then(() => {
+                  //   setLoading(false);
+                  //   navigate("/dashboard");
+                  // });
+                  // router.push("/seller");
                 >
                   {/* <span className="" onClick={() => submitGig()}> */}
                   <span className="">Submit</span>

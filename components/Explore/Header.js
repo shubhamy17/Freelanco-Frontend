@@ -12,24 +12,32 @@ const Header = () => {
   return (
     <>
       <div
-        className="flex h-[90vh] pt-32 bg-cover justify-start"
-        style={{
-          backgroundImage: `url('/blo.jpg')`,
-        }}
+        className="flex h-[140vh] -mt-32 bg-cover justify-start bg-black"
+        style={
+          {
+            // backgroundImage: `url('/blo.png')`,
+            // "background-repeat": "no-repeat",
+          }
+        }
       >
         {/* Heading */}
+        <div className="video-container">
+          <video src={"/movie.mp4"} autoPlay loop muted id="myVideo" />
+        </div>
 
-        <div className="flex-col w-2/3 items-center pl-20">
-          <h1 className="text-6xl font-serif font-light text-white">
-            Find the most trusted{" "}
-            <span className="text-thin italic">
-              {" "}
-              <br /> freelance{" "}
-            </span>{" "}
-            services <br /> for your business
-          </h1>
-          <div className="mt-10">
-            <Button text={"Explore"} />
+        <div className="flex-col items-center content justify-center border">
+          <div className="pl-12">
+            <h1 className="text-6xl font-serif font-light text-white">
+              Find the most trusted{" "}
+              <span className="text-thin italic">
+                {" "}
+                <br /> freelance{" "}
+              </span>{" "}
+              services <br /> for your business
+            </h1>
+            <div className="mt-10">
+              <Button text={"Explore"} />
+            </div>
           </div>
 
           {/* <div className="flex justify-start items-center my-2">

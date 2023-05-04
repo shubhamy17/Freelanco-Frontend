@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
   const [currentFreelancerData, setCurrentFreelancerData] = useState(undefined);
   const [freelancerCompletenes, setCompleteness] = useState(undefined);
   const [search, setSearch] = useState("");
+  const [theme, setTheme] = useState(undefined);
 
   const [isWrongNetwork, setIsWrongNetwork] = useState(undefined);
 
@@ -158,7 +159,9 @@ export const AuthProvider = ({ children }) => {
         setIsWrongNetwork,
         search,
         setSearch,
-        setValues
+        setValues,
+        theme,
+        setTheme,
       }}
     >
       {children}
