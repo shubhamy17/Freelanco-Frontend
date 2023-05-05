@@ -6,6 +6,7 @@ import { Box, Fab, List, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import { MessageLeft, MessageRight } from "./Message";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import TextInput from "./TextInput";
 import { Fragment } from "react";
 
@@ -49,7 +50,9 @@ function Chat({ selected, conversations, to, freelancerData }) {
   const { user } = useAuth();
   const router = useRouter();
   const refc = useRef();
+  const fileInputRef = useRef(null);
   const [messageState, setMessage] = useState("");
+  const [file, setFile] = useState(null);
 
   const [freelancerAddr, setFreelancerAddr] = useState(null);
   const [width, setWidth] = useState(window.innerWidth);
@@ -94,18 +97,56 @@ function Chat({ selected, conversations, to, freelancerData }) {
 
   const ref = useRef(null);
 
+  function handleIconClick() {
+    fileInputRef.current.click();
+  }
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   const sendMessage = () => {
-    const message = {
-      message: messageState,
-      conversation_id: selected,
-      from: user.wallet_address,
-      to: to.filter((addr) => addr !== user.wallet_address)[0],
-      type: "Text",
-    };
-    if (socket) {
-      socket.emit("text_message", message);
-      setMessage("");
-      ref.current.focus();
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+
+      reader.onload = () => {
+        const arrayBuffer = reader.result;
+        const buffer = Buffer.from(arrayBuffer);
+
+        socket.emit('file_message', {
+          mimetype: file.type,
+          filename: file.name,
+          buffer: buffer,
+        }, (location) => {
+          const message = {
+            message: location,
+            conversation_id: selected,
+            from: user.wallet_address,
+            to: to.filter((addr) => addr !== user.wallet_address)[0],
+            type: "Link",
+          };
+          if (socket) {
+            socket.emit("text_message", message);
+            setMessage("");
+            ref.current.focus();
+          }
+        });
+      };
+    }
+    else {
+      const message = {
+        message: messageState,
+        conversation_id: selected,
+        from: user.wallet_address,
+        to: to.filter((addr) => addr !== user.wallet_address)[0],
+        type: "Text",
+      };
+      if (socket) {
+        socket.emit("text_message", message);
+        setMessage("");
+        ref.current.focus();
+      }
     }
   };
 
@@ -250,8 +291,8 @@ function Chat({ selected, conversations, to, freelancerData }) {
                     ? to[0]
                     : reduceWalletAddress(to[0])
                   : width > 1000
-                  ? to[1]
-                  : reduceWalletAddress(to[1])}{" "}
+                    ? to[1]
+                    : reduceWalletAddress(to[1])}{" "}
               </p>
             </div>
           </div>
@@ -272,10 +313,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
                     ? generateDate(state.messages[id].created_at)
                     : id > 0 &&
                       new Date(state.messages[id].created_at).getDate() -
-                        new Date(state.messages[id - 1].created_at).getDate() >
-                        0
-                    ? generateDate(state.messages[id].created_at)
-                    : null}
+                      new Date(state.messages[id - 1].created_at).getDate() >
+                      0
+                      ? generateDate(state.messages[id].created_at)
+                      : null}
                   {message.from != user?.wallet_address && (
                     <MessageLeft
                       message={message.text}
@@ -289,6 +330,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                           ? titleCase(freelancerData?.name)
                           : reduceWalletAddress(user.wallet_address)
                       }
+                      type={message.type}
                     />
                   )}
 
@@ -298,6 +340,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                       timestamp={message.created_at}
                       photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
                       avatarDisp={true}
+                      type={message.type}
                     />
                   )}
                 </Fragment>
@@ -316,6 +359,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                           ? titleCase(freelancerData?.name)
                           : reduceWalletAddress(user.wallet_address)
                       }
+                      type={message.type}
                     />
                   )}
 
@@ -325,6 +369,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                       timestamp={null}
                       photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
                       avatarDisp={true}
+                      type={message.type}
                     />
                   )}
                 </Fragment>
@@ -340,10 +385,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
                     ? generateDate(state?.messages[id]?.created_at)
                     : id > 0 &&
                       new Date(state.messages[id].created_at).getDate() -
-                        new Date(state.messages[id - 1].created_at).getDate() >
-                        0
-                    ? generateDate(state.messages[id].created_at)
-                    : null}
+                      new Date(state.messages[id - 1].created_at).getDate() >
+                      0
+                      ? generateDate(state.messages[id].created_at)
+                      : null}
                   {message.from != user?.wallet_address && (
                     <MessageLeft
                       message={message.text}
@@ -352,6 +397,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                         "https://ipfs.io/ipfs/" + freelancerData?.ipfsImageHash
                       }
                       avatarDisp={true}
+                      type={message.type}
                     />
                   )}
 
@@ -362,6 +408,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                       photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
                       avatarDisp={true}
                       displayName={titleCase(freelancerData?.name)}
+                      type={message.type}
                     />
                   )}
                 </Fragment>
@@ -375,6 +422,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                         "https://ipfs.io/ipfs/" + freelancerData?.ipfsImageHash
                       }
                       avatarDisp={true}
+                      type={message.type}
                     />
                   )}
 
@@ -385,6 +433,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                       photoURL="https://lh3.googleusercontent.com/a-/AOh14Gi4vkKYlfrbJ0QLJTg_DLjcYyyK7fYoWRpz2r4s=s96-c"
                       avatarDisp={true}
                       displayName={titleCase(freelancerData?.name)}
+                      type={message.type}
                     />
                   )}
                 </Fragment>
@@ -419,6 +468,21 @@ function Chat({ selected, conversations, to, freelancerData }) {
             className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-md py-3"
           />
           <div className="absolute right-0 items-center inset-y-0  sm:flex">
+            {/* <AttachFileIcon />
+              <input
+                // className={inputSelector}
+                type="file"
+                onChange={handleFileChange}
+              /> */}
+            <div>
+              <AttachFileIcon onClick={handleIconClick} />
+              <input
+                type="file"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+              />
+            </div>
             <button
               type="button"
               onClick={() => sendMessage()}

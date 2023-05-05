@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) =>
       padding: "10px",
       backgroundColor: "#f8e896",
       maxWidth: "60%",
-      minWidth:"10%",
+      minWidth: "10%",
       //height: "50px",
       textAlign: "left",
       font: "400 .9em 'Open Sans', sans-serif",
@@ -88,13 +88,13 @@ const useStyles = makeStyles((theme) =>
     messageContent: {
       padding: 0,
       margin: 0,
-      wordWrap:"break-word"
+      wordWrap: "break-word"
     },
     messageTimeStampRight: {
       // position: "absolute",
       fontSize: ".85em",
       fontWeight: "550",
-      marginBottom:"5px"
+      marginBottom: "5px"
       // padding:"5px"
     },
 
@@ -112,38 +112,77 @@ const useStyles = makeStyles((theme) =>
     },
     displayName: {
       marginBottom: "5px",
-      fontWeight:"550"
+      fontWeight: "550"
     }
   })
 );
 
+function isImageOrDocument(fileUrl) {
+  const extension = fileUrl.split('.').pop().toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+      return 'image';
+    case 'pdf':
+    case 'doc':
+    case 'docx':
+    case 'xls':
+    case 'xlsx':
+    case 'ppt':
+    case 'pptx':
+    case 'txt':
+    case 'csv':
+      return 'document';
+    default:
+      return 'unknown';
+  }
+}
+
+
+
 //avatarが左にあるメッセージ（他人）
 export const MessageLeft = (props) => {
+  const ext = isImageOrDocument(props.message);
+  console.log(props.message, ext);
   const message = props.message ? props.message : "no message";
-  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0')+":"+new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
+  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0') + ":" + new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
   const photoURL = props.photoURL ? props.photoURL : "/polygon.png";
   const displayName = props.displayName;
   const classes = useStyles();
   return (
     <>
-      <div className={classes.messageRow} style={props.timestamp!=null?{"marginTop":"5px"}:{}}>
-      {props.timestamp!=null?
-        <Avatar
-          alt={displayName}
-          className={classes.orange}
-          src={photoURL}
-        ></Avatar>
-        :<span style={{"width":"32px"}}></span>}
-        <div style={{"minWidth":"10%","maxWidth":"60%"}}>
+      <div className={classes.messageRow} style={props.timestamp != null ? { "marginTop": "5px" } : {}}>
+        {props.timestamp != null ?
+          <Avatar
+            alt={displayName}
+            className={classes.orange}
+            src={photoURL}
+          ></Avatar>
+          : <span style={{ "width": "32px" }}></span>}
+        <div style={{ "minWidth": "10%", "maxWidth": "60%" }}>
           <div className={classes.messageBlue}>
-            {props.timestamp!=null?
+            {props.timestamp != null ?
               <div className={classes.displayName}>
-                <span style={{"paddingRight":"5px"}}>{displayName}</span>
+                <span style={{ "paddingRight": "5px" }}>{displayName}</span>
                 <span className={classes.messageTimeStampRight}>{timestamp}</span>
               </div>
-            :null}
+              : null}
             <div>
-              <p className={classes.messageContent}>{message}</p>
+              {ext === "document" ? (
+                <p className={classes.messageContent}>
+                  <a href={message} target="_blank"><u>{message}</u></a>
+                </p>
+              ) : ext === "image" ? (
+                <img
+                  src={message}
+                  style={{ height: "300px", width: "auto" }}
+                  alt=""
+                />
+              ) : (
+                <p className={classes.messageContent}>{message}</p>
+              )}
             </div>
           </div>
         </div>
@@ -153,16 +192,30 @@ export const MessageLeft = (props) => {
 };
 //avatarが右にあるメッセージ（自分）
 export const MessageRight = (props) => {
+  const ext = isImageOrDocument(props.message);
+  console.log(props.message, ext);
   const classes = useStyles();
   const message = props.message ? props.message : "no message";
-  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0')+":"+new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
+  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0') + ":" + new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
   return (
-    <div className={classes.messageRowRight} style={props.timestamp!=null?{"marginTop":"10px"}:{}}>
+    <div className={classes.messageRowRight} style={props.timestamp != null ? { "marginTop": "10px" } : {}}>
       <div className={classes.messageOrange}>
         {props.timestamp != null ? (
           <div className={classes.messageTimeStampRight}>{timestamp}</div>
         ) : null}
-        <p className={classes.messageContent}>{message}</p>
+        {ext === "document" ? (
+          <p className={classes.messageContent}>
+            <a href={message} target="_blank"><u>{message}</u></a>
+          </p>
+        ) : ext === "image" ? (
+          <img
+            src={message}
+            style={{ height: "300px", width: "auto" }}
+            alt=""
+          />
+        ) : (
+          <p className={classes.messageContent}>{message}</p>
+        )}
       </div>
     </div>
   );
