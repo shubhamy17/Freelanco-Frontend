@@ -134,11 +134,12 @@ const CreateFreelancerPage = () => {
     dataF.append("file", selectedFile);
 
     const res = await uploadImage(dataF);
-    setValue("ipfsImageHash", res.IpfsHash);
-    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setValue("ipfsImageHash", res.ipfsImageHash);
+    setValue("awsImageLink", res.awsImageLink);
+    setTxMessage(`ipfs hash: ${res.ipfsImageHash}`);
     setTimeout(() => {
       setShowTxDialog(false);
-    }, 2000);
+    }, 1000);
   };
 
   const sendJsonToBackend = async () => {
@@ -163,7 +164,7 @@ const CreateFreelancerPage = () => {
         let tx = await contractWithSigner.safeMint(jsonURI, {
           gasLimit: 500000,
         });
-        await tx.wait(6);
+        await tx.wait();
         console.log(tx);
         setIsMinted(false);
         console.log("storing in db");

@@ -210,8 +210,9 @@ const CreateFreelancerPage = () => {
     dataF.append("file", e.target.files[0]);
     const res = await uploadImage(dataF);
     console.log("eeeeeeeeeee", res);
-    setValue("ipfsImageHash", res.IpfsHash);
-    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setValue("ipfsImageHash", res.ipfsImageHash);
+    setValue("awsImageLink", res.awsImageLink);
+    setTxMessage(`ipfs hash: ${res.ipfsImageHash}`);
     setTimeout(() => {
       setShowTxDialog(false);
     }, 1000);
