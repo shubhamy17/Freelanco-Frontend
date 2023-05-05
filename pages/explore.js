@@ -6,14 +6,15 @@ import GigsWelcome from "../components/Gigs/GigsWelcome";
 import useAuth from ".././hooks/useAuth";
 import Deck from "../components/Explore/Deck";
 import { getProposalsOfClient } from "../api/auth";
-import { getAllGig, getPopular } from "../api/gig";
+import { getAllGig, getPopular, getGigBySearch } from "../api/gig";
 import CircularProgress from '@mui/material/CircularProgress';
 
 const GigsListing = () => {
   const [recommendedGigs, setRecommendedGigs] = useState([]);
   const [mostPopular, setMostPopular] = useState([]);
-  const [filteredGigs, setFilteredGigs] = useState([]);
+  const [searchedGigs, setSearchedGigs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [visibleGigs, setVisibleGigs] = useState([]);
 
   const { user, search } = useAuth();
 
@@ -33,17 +34,36 @@ const GigsListing = () => {
     getData();
   }, [user]);
 
+
   useEffect(() => {
     if (search) {
-      const filtered = mostPopular.filter((gig) => {
-        const searchFields = [gig.title, gig.category, gig.sub_category, ...gig.skill];
-        return searchFields.some(field => field.toLowerCase().includes(search.toLowerCase()));
-      });
-      setFilteredGigs(filtered);
-    } else {
-      setFilteredGigs(mostPopular);
+      const getData = async () => {
+        const res = await getGigBySearch(search);
+        setSearchedGigs(
+          res.filter((r) => {
+            if (user) { return r.freelancer.wallet_address !== user.wallet_address }
+            else {
+              return r;
+            }
+          })
+        );
+        setIsLoading(false);
+      };
+      getData();
     }
-  }, [search, mostPopular]);
+  }, [search]);
+
+  useEffect(() => {
+    if (searchedGigs.length > 0 && search) {
+      setVisibleGigs(searchedGigs);
+    }
+    else {
+      setVisibleGigs(mostPopular);
+    }
+  }, [mostPopular, search, searchedGigs])
+
+  console.log("searched", searchedGigs);
+
 
   return (
     <div className="flex-col mt-20 transition ease-in-out delay-80 w-full">
@@ -58,8 +78,8 @@ const GigsListing = () => {
           {isLoading && user ? (
             // Display the loading component while data is being fetched
             <CircularProgress />
-          ) : filteredGigs.length > 0 ? (
-            filteredGigs.map((gig) => <GigCard key={gig._id} gig={gig} />)
+          ) : visibleGigs.length > 0 ? (
+            visibleGigs.map((gig) => <GigCard key={gig._id} gig={gig} />)
           ) : (
             // Display the empty state if no gigs are found
             <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col absoluteCenter">

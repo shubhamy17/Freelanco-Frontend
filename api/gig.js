@@ -72,3 +72,13 @@ export const getGigById = (id) =>
       .catch((err) => reject(err));
   });
 
+export const getGigBySearch = (searchString) =>
+  new Promise((resolve, reject) => {
+    axiosInstance
+      .get(`/gigs/search/${searchString}`)
+      .then((res) => {
+        resolve(res.data);
+        console.log("rating--->", res.data);
+      })
+      .catch((err) => reject(err));
+  });

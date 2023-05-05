@@ -56,6 +56,7 @@ const NavBar = () => {
     router.pathname === "/gigs" || router.pathname == "/explore";
 
   const [colorChange, setColorchange] = useState(false);
+  const [navSearch, setNavSearch] = useState("");
   const changeNavbarColor = () => {
     if (window.scrollY >= 80) {
       setColorchange(true);
@@ -71,6 +72,15 @@ const NavBar = () => {
     setIsLoggedIn(false);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      // Do something when the Enter key is pressed
+      setSearch(navSearch);
+      console.log("Enter key pressed!");
+    }
+  };
+
+
   // RainbowKit.onWalletChange(async (wallet) => {
   //   connectAndSign();
   //   // const data = await response.json();
@@ -79,14 +89,17 @@ const NavBar = () => {
   useEffect(() => window.addEventListener("scroll", changeNavbarColor));
 
   const handleSearchChange = (e) => {
-    setSearch(e.target.value);
+    setNavSearch(e.target.value);
   };
+  const saveSearch = () => {
+    setSearch(navSearch);
+  }
 
   const colorChangeClass = colorChange
     ? "bg-white text-blue-800"
     : isDarkPage
-    ? "bg-transparent text-white"
-    : "bg-transparent text-blue-800";
+      ? "bg-transparent text-white"
+      : "bg-transparent text-blue-800";
 
   const borderClass = isDarkPage
     ? colorChange
@@ -118,7 +131,8 @@ const NavBar = () => {
               <input
                 type="text"
                 onChange={handleSearchChange}
-                value={search}
+                onKeyDown={handleKeyDown}
+                value={navSearch}
                 className="placeholder:italic placeholder:text-slate-500 w-[30vw] block rounded-l-lg bg-white h-10 border border-slate-300 py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-blue-800 focus:ring-sky-500 focus:ring-1 sm:text-sm hover:border-blue-800"
                 placeholder={
                   isSearchPage
@@ -134,6 +148,7 @@ const NavBar = () => {
                   className="h-5 w-5"
                   src="https://img.icons8.com/ios-glyphs/344/search--v1.png"
                   alt=""
+                  onClick={saveSearch}
                 />
               </div>
             </div>
@@ -155,8 +170,8 @@ const NavBar = () => {
                   <Link href="/login">Post a Job</Link>
                 </span> */}
                 {router.pathname === "/freelancer" ||
-                router.pathname === "/seller" ||
-                router.pathname === "/seller-profile" ? (
+                  router.pathname === "/seller" ||
+                  router.pathname === "/seller-profile" ? (
                   <></>
                 ) : (
                   <>
@@ -176,7 +191,7 @@ const NavBar = () => {
                     >
                       {user?.freelancer_ref ? (
                         router.pathname.includes("gig") ||
-                        router.pathname === "/" ? (
+                          router.pathname === "/" ? (
                           <Link href="/seller">Profile</Link>
                         ) : (
                           <Link href="seller">Switch to Seller</Link>
@@ -263,7 +278,7 @@ const NavBar = () => {
               <>
                 {/* when logged in */}
                 {router.pathname === "/explore" ||
-                router.pathname === "/gigs" ? (
+                  router.pathname === "/gigs" ? (
                   isSellerYet ? (
                     <a href="/seller">
                       <span className="font-light cursor-pointer text-sm mt-1">
