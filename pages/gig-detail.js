@@ -17,6 +17,7 @@ const GigDetail = () => {
   useEffect(() => {
     async function fetchGig() {
       if (gigId) {
+        console.log("GOGID ", gigId);
         const gigData = await getGigById(gigId);
         setGig(gigData);
       }

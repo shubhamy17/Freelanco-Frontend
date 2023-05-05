@@ -11,14 +11,13 @@ const Slider = () => {
   return <div>Slider</div>;
 };
 
-
-
 const GigDetails = ({ gig }) => {
   const router = useRouter();
-  // let gigId = {};
-  // if (router.query.gig) {
-  //   gigId = JSON.parse(router.query.gig);
-  // }
+  let gigId = {};
+  if (router.query.gig) {
+    gigId = JSON.parse(router.query.gig);
+  }
+
   // const [gig, setGig] = useState({});
   // useEffect(() => {
   //   async function fetchGig() {
@@ -281,9 +280,7 @@ const GigDetails = ({ gig }) => {
                 <div className="flex justify-between">
                   <div className="flex p-4 rounded-lg my-2">
                     <Image
-                      src={
-                        "https://ipfs.io/ipfs/" + gig?.freelancer?.ipfsImageHash
-                      }
+                      src={gig?.freelancer?.awsImageLink}
                       alt=""
                       width={500}
                       height={500}

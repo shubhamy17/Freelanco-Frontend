@@ -54,10 +54,10 @@ const MyGigDetails = ({ gig }) => {
         </div>
       </div>
       <div className="w-full pl-8">
-        {image && (
+        {gig?.awsImageLink && (
           <Image
-            className="rounded-3xl w-full"
-            src={image}
+            className="rounded-3xl w-full h-[60vh]"
+            src={gig?.awsImageLink}
             alt="product image"
             height={500}
             width={800}
