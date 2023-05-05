@@ -5,7 +5,7 @@ import { useMoralis } from "react-moralis";
 import useAuth from "../../hooks/useAuth";
 // import Web3 from "web3";
 import { useRouter } from "next/router";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 
 import {
   useAccount,
@@ -42,7 +42,7 @@ const LoginForm = ({ setWantsToLogin }) => {
     setAsSeller,
     chainId,
     isWrongNetwork,
-    setValues
+    setValues,
   } = useAuth();
 
   const connectAndSign = async () => {
@@ -60,7 +60,7 @@ const LoginForm = ({ setWantsToLogin }) => {
       // making a post request to our 'request-message' endpoint
       const data = await requestMessage(userData);
       const message = data.message;
-      setIsLoading(false);
+
       // signing the received message via metamask
       const signature = await signMessageAsync({ message });
       setIsLoading(true);
@@ -103,13 +103,13 @@ const LoginForm = ({ setWantsToLogin }) => {
   const { push } = useRouter();
 
   return (
-    <div className="flex flex-col ml-20 mt-20">
+    <div className="flex flex-col ml-20 mt-40">
       <ErrorBox
         cancel={setShowErrorDialog}
         show={showErrorDialog}
         errorMessage={errorMessage}
       />
-      <h1 className="text-7xl font-black text-blue-800">Log in</h1>
+      <h1 className="text-7xl font-black text-white">Log in</h1>
       <p className="mt-2 text-gray-400 text-sm font-light">
         Enter your credentials to access your account.
       </p>
@@ -119,9 +119,6 @@ const LoginForm = ({ setWantsToLogin }) => {
           e.preventDefault();
         }}
       >
-        {isLoading && <div className="flex  justify-center mt-5 ml-5 w-full">
-          <CircularProgress />
-        </div>}
         <label htmlFor="email" className="text-sm font-semibold text-gray-500">
           Wallet
         </label>
@@ -133,13 +130,21 @@ const LoginForm = ({ setWantsToLogin }) => {
         />
         {address &&
           (!isWrongNetwork ? (
-            <button
-              // href="/explore"
-              onClick={() => connectAndSign()}
-              className="w-3/4 p-4 cursor-pointer border border-blue-800 rounded-2xl my-4  py-2 text-blue-800 font-light"
-            >
-              Sign In
-            </button>
+            <>
+              {isLoading ? (
+                <div className="flex w-3/4justify-end mt-5 mx-5">
+                  <CircularProgress />
+                </div>
+              ) : (
+                <button
+                  // href="/explore"
+                  onClick={() => connectAndSign()}
+                  className="w-3/4 p-4 cursor-pointer border border-white rounded-2xl my-4  py-2 text-white font-light"
+                >
+                  Sign In
+                </button>
+              )}
+            </>
           ) : (
             <span className="w-3/4 p-4 cursor-pointer border border-blue-800 rounded-2xl my-4  py-2 text-blue-800 font-light">
               Please reconnect to Polygon Mumbai network.

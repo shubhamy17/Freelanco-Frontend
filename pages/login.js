@@ -8,15 +8,17 @@ const LoginPage = () => {
 
   return (
     <div
-      className="flex ml-20 pr-20 h-screen w-screen bg-cover mt-10 transition ease-in-out delay-80"
+      className="flex pr-20 h-screen w-screen bg-cover transition ease-in-out delay-80"
       style={{
-        backgroundImage: `url('/bg.jpg')`,
+        backgroundImage: `url('/trust.jpg')`,
+
+        // filter: "blur(8px)",
       }}
     >
-      <div className="min-h-[calc(70vh)] flex-2/3 w-1/2">
+      <div className="min-h-[calc(70vh)] lg:flex-2/3 w-full lg:w-1/2">
         <LoginForm setWantsToLogin={setWantsToLogin} />
       </div>
-      <div className="min-h-[calc(70vh)] flex-1/3 w-1/2">
+      <div className="min-h-[calc(70vh)] mt-20 flex-1/3 w-1/2 hidden lg:block">
         <LoginHeader />
       </div>
     </div>

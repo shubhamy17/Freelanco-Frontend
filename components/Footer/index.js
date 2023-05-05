@@ -3,14 +3,19 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer class="bg-white">
+    <footer
+      class="bg-black opacity-95"
+      // style={{
+      //   opacity: 95,
+      // }}
+    >
       <div class="max-w-screen-xl flex-col flex items-center p-4 py-6 mx-auto lg:py-16 md:p-8 lg:p-10">
-        <div class="flex gap-x-40 text-center">
+        <div class="flex lg:gap-x-40 md:gap-x-20 text-center">
           <div>
-            <h3 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+            <h3 class="mb-6 text-sm font-semibold text-blue-800 underline uppercase dark:text-white">
               DAO
             </h3>
-            <ul class="text-gray-500 dark:text-gray-400">
+            <ul class="text-white">
               <li class="mb-4">
                 <Link href="/faq" class=" hover:underline">
                   FAQ
@@ -37,10 +42,10 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+            <h3 class="mb-6 text-sm font-semibold text-blue-800 underline uppercase dark:text-white">
               Developers
             </h3>
-            <ul class="text-gray-500 dark:text-gray-400">
+            <ul class="text-white dark:text-gray-400">
               <li class="mb-4">
                 <a href="#" class=" hover:underline">
                   Create
@@ -59,10 +64,10 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+            <h3 class="mb-6 text-sm font-semibold text-blue-800 underline uppercase dark:text-white">
               Help center
             </h3>
-            <ul class="text-gray-500 dark:text-gray-400">
+            <ul class="text-white dark:text-gray-400">
               <li class="mb-4">
                 <a href="#" class="hover:underline">
                   Discord Server
@@ -88,7 +93,7 @@ const Footer = () => {
             <li>
               <a
                 href="#"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white dark:text-gray-400"
+                class="text-gray-500 hover:text-white dark:hover:text-white dark:text-gray-400"
               >
                 <svg
                   class="w-5 h-5"
@@ -107,7 +112,7 @@ const Footer = () => {
             <li>
               <a
                 href="#"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white dark:text-gray-400"
+                class="text-gray-500 hover:text-white dark:hover:text-white dark:text-gray-400"
               >
                 <svg
                   class="w-5 h-5"
@@ -126,7 +131,7 @@ const Footer = () => {
             <li>
               <a
                 href="#"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white dark:text-gray-400"
+                class="text-gray-500 hover:text-white dark:hover:text-white dark:text-gray-400"
               >
                 <svg
                   class="w-5 h-5"
@@ -141,7 +146,7 @@ const Footer = () => {
             <li>
               <a
                 href="#"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white dark:text-gray-400"
+                class="text-gray-500 hover:text-white dark:hover:text-white dark:text-gray-400"
               >
                 <svg
                   class="w-5 h-5"
@@ -160,7 +165,7 @@ const Footer = () => {
             <li>
               <a
                 href="#"
-                class="text-gray-500 hover:text-gray-900 dark:hover:text-white dark:text-gray-400"
+                class="text-gray-500 hover:text-white dark:hover:text-white dark:text-gray-400"
               >
                 <svg
                   class="w-5 h-5"
