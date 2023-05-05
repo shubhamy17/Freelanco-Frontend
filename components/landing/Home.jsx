@@ -85,7 +85,7 @@ export const Button = ({ text }) => {
         txMessage={txMessage}
       />
       <button
-        className="bg-blue-600 text-white font-bold py-2 px-4 rounded-full hover:bg-blue-700 transition duration-200"
+        className="bg-transparent border text-white font-bold py-2 px-4 rounded-full transition duration-200"
         onClick={async () => {
           if (String(text) == "Explore") {
             router.push("/explore");

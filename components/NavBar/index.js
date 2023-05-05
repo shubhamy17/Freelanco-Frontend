@@ -32,6 +32,7 @@ const NavBar = () => {
     chainId,
     search,
     setSearch,
+    theme,
   } = useAuth();
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -40,11 +41,14 @@ const NavBar = () => {
 
   const { chain } = useNetwork();
 
-  const isDarkPage =
-    router.pathname === "/" ||
-    router.pathname === "/dao" ||
-    router.pathname.includes("/dao-home") ||
-    router.pathname === "/join";
+  const isDarkPage = true;
+  // router.pathname === "/" ||
+  // router.pathname === "/dao" ||
+  // router.pathname.includes("/dao-home") ||
+  // router.pathname === "/join" ||
+  // router.pathname == "/settings";
+
+  // let isDarkPage = theme == "dark";
 
   const isSignInPage =
     router.pathname === "/login" ||
@@ -98,8 +102,8 @@ const NavBar = () => {
   const colorChangeClass = colorChange
     ? "bg-white text-blue-800"
     : isDarkPage
-      ? "bg-transparent text-white"
-      : "bg-transparent text-blue-800";
+    ? "bg-transparent text-blue-800"
+    : "bg-transparent text-black-800";
 
   const borderClass = isDarkPage
     ? colorChange
@@ -113,12 +117,24 @@ const NavBar = () => {
         "flex justify-between py-3 fixed top-0 left-0 right-0 transition ease-in-out delay-100 px-28 " +
         colorChangeClass
       }
-      style={{
-        zIndex: 10000,
-      }}
+      style={
+        // router.pathname === "/" ||
+        // router.pathname === "/dao" ||
+        // router.pathname.includes("/dao-home") ||
+        // router.pathname === "/join" ||
+        // router.pathname == "/settings"
+        //   ?
+        {
+          zIndex: 10000,
+          background: "rgba(0, 0, 0, 0.5)",
+          color: "#f1f1f1",
+        }
+
+        // : {}
+      }
     >
       <h2 className="cursor-pointer flex items-center">
-        <Link href="/" className="font-extrabold text-4xl ">
+        <Link href="/" className="font-extrabold text-4xl -ml-20 lg:ml-5">
           Freelanco.
         </Link>
         <span className={"text-md ml-2 px-2 border rounded-2xl" + borderClass}>
@@ -127,7 +143,7 @@ const NavBar = () => {
 
         {isSearchPage && (
           <>
-            <div className="flex justify-start items-center ml-5 mt-1">
+            <div className="flex justify-start items-center ml-5 mt-1 hideItOut">
               <input
                 type="text"
                 onChange={handleSearchChange}
@@ -156,7 +172,7 @@ const NavBar = () => {
         )}
       </h2>
 
-      <div className="flex justify-end gap-x-6 my-2">
+      <div className="flex justify-end gap-x-6 my-2 stormItOut">
         {!isSignInPage && (
           <>
             {isLoggedIn && (

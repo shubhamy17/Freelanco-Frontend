@@ -19,13 +19,17 @@ import { RecoilRoot } from "recoil";
 
 import "@rainbow-me/rainbowkit/styles.css";
 
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import {
   mainnet,
+  polygonMumbai,
   polygon,
   optimism,
   arbitrum,
-  polygonMumbai,
 } from "wagmi/chains";
 import Footer from "../components/Footer";
 
@@ -55,11 +59,15 @@ function MyApp({ Component, pageProps }) {
     <WagmiConfig client={client}>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
         <MoralisProvider initializeOnMount={false}>
-          <RainbowKitProvider chains={chains}>
+          <RainbowKitProvider chains={chains} theme={darkTheme()}>
             <AuthProvider>
               <GigsProvider>
                 <RecoilRoot>
                   <NavBar />
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+                  />
                   <Component {...pageProps} />
                   <Analytics />
                 </RecoilRoot>
