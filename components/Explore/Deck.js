@@ -7,15 +7,6 @@ import Image from "next/image";
 export const CategoryCard = ({ category }) => {
   const router = useRouter();
 
-  useEffect(() => {
-    const getData = async () => {
-      const res = await getCategoryImage("category.jpg");
-      console.log(res);
-    };
-
-    getData();
-  }, []);
-
   console.log(category);
 
   const imageMapping = {

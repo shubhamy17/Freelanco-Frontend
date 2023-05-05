@@ -17,6 +17,7 @@ import {
   useNetwork,
 } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { getGigBySearch } from "../../api/gig";
 
 const NavBar = () => {
   const router = useRouter();
@@ -30,9 +31,9 @@ const NavBar = () => {
     AsSeller,
     setAsSeller,
     chainId,
-    search,
-    setSearch,
     theme,
+    searchedGigs,
+    setSearchedGigs,
   } = useAuth();
   const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
@@ -76,15 +77,6 @@ const NavBar = () => {
     setIsLoggedIn(false);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      // Do something when the Enter key is pressed
-      setSearch(navSearch);
-      console.log("Enter key pressed!");
-    }
-  };
-
-
   // RainbowKit.onWalletChange(async (wallet) => {
   //   connectAndSign();
   //   // const data = await response.json();
@@ -92,12 +84,32 @@ const NavBar = () => {
 
   useEffect(() => window.addEventListener("scroll", changeNavbarColor));
 
-  const handleSearchChange = (e) => {
-    setNavSearch(e.target.value);
+  const searchGigs = async () => {
+    if (navSearch) {
+      const res = await getGigBySearch(navSearch);
+      if (
+        res.filter((r) => {
+          if (user) {
+            return r.freelancer.wallet_address !== user.wallet_address;
+          } else {
+            return r;
+          }
+        }).length > 0
+      ) {
+        setSearchedGigs(
+          res.filter((r) => {
+            if (user) {
+              return r.freelancer.wallet_address !== user.wallet_address;
+            } else {
+              return r;
+            }
+          })
+        );
+      } else {
+        setSearchedGigs("empty");
+      }
+    }
   };
-  const saveSearch = () => {
-    setSearch(navSearch);
-  }
 
   const colorChangeClass = colorChange
     ? "bg-white text-blue-800"
@@ -146,10 +158,18 @@ const NavBar = () => {
             <div className="flex justify-start items-center ml-5 mt-1 hideItOut">
               <input
                 type="text"
-                onChange={handleSearchChange}
-                onKeyDown={handleKeyDown}
+                onChange={(e) => {
+                  setNavSearch(e.target.value);
+                }}
+                onKeyDown={async (event) => {
+                  if (event.key === "Enter") {
+                    // Do something when the Enter key is pressed
+                    setNavSearch(navSearch);
+                    await searchGigs();
+                  }
+                }}
                 value={navSearch}
-                className="placeholder:italic placeholder:text-slate-500 w-[30vw] block rounded-l-lg bg-white h-10 border border-slate-300 py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-blue-800 focus:ring-sky-500 focus:ring-1 sm:text-sm hover:border-blue-800"
+                className="placeholder:italic text-black placeholder:text-slate-500 w-[30vw] block rounded-l-lg bg-white h-10 border border-slate-300 py-2 pl-3 pr-3 shadow-sm focus:outline-none focus:border-blue-800 focus:ring-sky-500 focus:ring-1 sm:text-sm hover:border-blue-800"
                 placeholder={
                   isSearchPage
                     ? "What service are you looking for today?"
@@ -164,7 +184,7 @@ const NavBar = () => {
                   className="h-5 w-5"
                   src="https://img.icons8.com/ios-glyphs/344/search--v1.png"
                   alt=""
-                  onClick={saveSearch}
+                  onClick={searchGigs}
                 />
               </div>
             </div>
@@ -186,8 +206,8 @@ const NavBar = () => {
                   <Link href="/login">Post a Job</Link>
                 </span> */}
                 {router.pathname === "/freelancer" ||
-                  router.pathname === "/seller" ||
-                  router.pathname === "/seller-profile" ? (
+                router.pathname === "/seller" ||
+                router.pathname === "/seller-profile" ? (
                   <></>
                 ) : (
                   <>
@@ -207,7 +227,7 @@ const NavBar = () => {
                     >
                       {user?.freelancer_ref ? (
                         router.pathname.includes("gig") ||
-                          router.pathname === "/" ? (
+                        router.pathname === "/" ? (
                           <Link href="/seller">Profile</Link>
                         ) : (
                           <Link href="seller">Switch to Seller</Link>
@@ -294,7 +314,7 @@ const NavBar = () => {
               <>
                 {/* when logged in */}
                 {router.pathname === "/explore" ||
-                  router.pathname === "/gigs" ? (
+                router.pathname === "/gigs" ? (
                   isSellerYet ? (
                     <a href="/seller">
                       <span className="font-light cursor-pointer text-sm mt-1">

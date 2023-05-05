@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const [freelancerCompletenes, setCompleteness] = useState(undefined);
   const [search, setSearch] = useState("");
   const [theme, setTheme] = useState(undefined);
-
+  const [searchedGigs, setSearchedGigs] = useState([]);
   const [isWrongNetwork, setIsWrongNetwork] = useState(undefined);
 
   async function setValues() {
@@ -162,6 +162,8 @@ export const AuthProvider = ({ children }) => {
         setValues,
         theme,
         setTheme,
+        searchedGigs,
+        setSearchedGigs,
       }}
     >
       {children}
