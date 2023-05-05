@@ -15,10 +15,11 @@ const useStyles = makeStyles((theme) =>
     messageBlue: {
       position: "relative",
       marginLeft: "20px",
-      marginBottom: "10px",
+      marginBottom: "0.4px",
       padding: "10px",
       backgroundColor: "#A8DDFD",
-      width: "60%",
+      // maxWidth: "60%",
+      // minWidth:"10%",
       //height: "50px",
       textAlign: "left",
       font: "400 .9em 'Open Sans', sans-serif",
@@ -50,10 +51,11 @@ const useStyles = makeStyles((theme) =>
     messageOrange: {
       position: "relative",
       marginRight: "20px",
-      marginBottom: "10px",
+      marginBottom: "0.4px",
       padding: "10px",
       backgroundColor: "#f8e896",
-      width: "60%",
+      maxWidth: "60%",
+      minWidth:"10%",
       //height: "50px",
       textAlign: "left",
       font: "400 .9em 'Open Sans', sans-serif",
@@ -85,15 +87,15 @@ const useStyles = makeStyles((theme) =>
 
     messageContent: {
       padding: 0,
-      margin: 0
+      margin: 0,
+      wordWrap:"break-word"
     },
     messageTimeStampRight: {
-      position: "absolute",
+      // position: "absolute",
       fontSize: ".85em",
-      fontWeight: "300",
-      marginTop: "10px",
-      bottom: "-3px",
-      right: "5px"
+      fontWeight: "550",
+      marginBottom:"5px"
+      // padding:"5px"
     },
 
     orange: {
@@ -109,7 +111,8 @@ const useStyles = makeStyles((theme) =>
       height: theme.spacing(4)
     },
     displayName: {
-      marginLeft: "20px"
+      marginBottom: "5px",
+      fontWeight:"550"
     }
   })
 );
@@ -117,25 +120,31 @@ const useStyles = makeStyles((theme) =>
 //avatarが左にあるメッセージ（他人）
 export const MessageLeft = (props) => {
   const message = props.message ? props.message : "no message";
-  const timestamp = props.timestamp ? props.timestamp : "";
+  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0')+":"+new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
   const photoURL = props.photoURL ? props.photoURL : "/polygon.png";
-  const displayName = props.displayName
+  const displayName = props.displayName;
   const classes = useStyles();
   return (
     <>
-      <div className={classes.messageRow}>
+      <div className={classes.messageRow} style={props.timestamp!=null?{"marginTop":"5px"}:{}}>
+      {props.timestamp!=null?
         <Avatar
           alt={displayName}
           className={classes.orange}
           src={photoURL}
         ></Avatar>
-        <div>
-          <div className={classes.displayName}>{displayName}</div>
+        :<span style={{"width":"32px"}}></span>}
+        <div style={{"minWidth":"10%","maxWidth":"60%"}}>
           <div className={classes.messageBlue}>
+            {props.timestamp!=null?
+              <div className={classes.displayName}>
+                <span style={{"paddingRight":"5px"}}>{displayName}</span>
+                <span className={classes.messageTimeStampRight}>{timestamp}</span>
+              </div>
+            :null}
             <div>
               <p className={classes.messageContent}>{message}</p>
             </div>
-            <div className={classes.messageTimeStampRight}>{timestamp}</div>
           </div>
         </div>
       </div>
@@ -146,12 +155,14 @@ export const MessageLeft = (props) => {
 export const MessageRight = (props) => {
   const classes = useStyles();
   const message = props.message ? props.message : "no message";
-  const timestamp = props.timestamp ? props.timestamp : "";
+  const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0')+":"+new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
   return (
-    <div className={classes.messageRowRight}>
+    <div className={classes.messageRowRight} style={props.timestamp!=null?{"marginTop":"10px"}:{}}>
       <div className={classes.messageOrange}>
+        {props.timestamp != null ? (
+          <div className={classes.messageTimeStampRight}>{timestamp}</div>
+        ) : null}
         <p className={classes.messageContent}>{message}</p>
-        <div className={classes.messageTimeStampRight}>{timestamp}</div>
       </div>
     </div>
   );
