@@ -1,7 +1,7 @@
 import React from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
-import { deepOrange } from "@material-ui/core/colors";
+import { createStyles, makeStyles, Theme } from "@mui/styles";
+import Avatar from "@mui/material/Avatar";
+import { deepOrange } from "@mui/material/colors";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
