@@ -205,7 +205,7 @@ export const MessageRight = (props) => {
         ) : ext === "image" ? (
           <img
             src={message}
-            style={{ height: "300px", width: "auto" }}
+            style={{ height: "auto", width: "300px" }}
             alt=""
           />
         ) : (

@@ -9,7 +9,7 @@ import { getGigById } from "../api/gig";
 
 const GigDetail = () => {
   const router = useRouter();
-  let gigId = {};
+  let gigId;
   if (router.query.gig) {
     gigId = JSON.parse(router.query.gig);
   }
@@ -30,17 +30,21 @@ const GigDetail = () => {
 
   return (
     <>
-      {!isMyGig && (
-        <div className="flex mx-20 mt-20">
-          <div className="flex-3/4 w-3/4">
-            <GigDetails gig={gig} />
+      {gig && user?._id == gig?.user_ref ?
+       (<GigManagement gig={gig} />) :
+        (
+          <div className="flex mx-20 mt-20">
+            <div className="flex-3/4 w-3/4">
+              <GigDetails gig={gig} />
+            </div>
+            <div className="flex-1/4 w-1/4">
+              <GigActions gig={gig} />
+            </div>
           </div>
-          <div className="flex-1/4 w-1/4">
-            <GigActions gig={gig} />
-          </div>
-        </div>
-      )}
-      {isMyGig && gig != {} && <GigManagement gig={gig} />}
+        )
+
+      }
+
     </>
   );
 };

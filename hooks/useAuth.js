@@ -100,26 +100,25 @@ export const AuthProvider = ({ children }) => {
 
 
   useEffect(() => {
-    console.log(socket, "auth socket");
-    if (!socket && !socket?.connected && user) {
-      console.log("connecting.....");
-      connectSocket(user.wallet_address);
-    }
-  }, [user, socket]);
-
-
-  useEffect(() => {
-    if (socket && socket.connected && user ) {
-      console.log("connectong new message....................");
-      socket.on("new_message", (data) => {
-        setNewMessageCount((prevSet) => {
-          const newSet = new Set(prevSet);
-          newSet.add(data.conversation_id);
-          return newSet;
+    const connect = async () => {
+      console.log(socket, socket?.connected, user, "auth socket");
+      if (!socket && !socket?.connected && user) {
+        console.log("connecting.....");
+        const socket = await connectSocket(user.wallet_address);
+        console.log("socket id is ", socket.id);
+        socket.on("new_message", (data) => {
+          setNewMessageCount((prevSet) => {
+            const newSet = new Set(prevSet);
+            newSet.add(data.conversation_id);
+            return newSet;
+          });
         });
-      })
-    }
+      }
+    };
+    connect();
+
   }, [user, socket, socket?.connected]);
+
 
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
