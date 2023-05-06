@@ -5,7 +5,6 @@ import { getGigById } from "../../api/gig";
 import { useRouter } from "next/router";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
-import { constSelector } from "recoil";
 
 const Slider = () => {
   return <div>Slider</div>;

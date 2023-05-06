@@ -5,7 +5,6 @@ import { requestMessage, verifySignature } from "../../api/auth";
 
 import jwt_decode from "jwt-decode";
 
-// import { ConnectButton } from "web3uikit";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useAuth from "../../hooks/useAuth";
 

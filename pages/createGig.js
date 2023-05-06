@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
 import Packages from "../components/Freelancer/Packages";
 import loadingGif from "../public/walk.gif";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";

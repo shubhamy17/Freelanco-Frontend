@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 // import jwt_decode from "jwt-decode";
-import { useMoralis } from "react-moralis";
 // import { loginUser, profile, validateUser } from "../api/auth";
 import useAuth from "../../hooks/useAuth";
 // import Web3 from "web3";

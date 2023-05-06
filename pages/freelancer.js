@@ -1,14 +1,12 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, useContext } from "react";
-import { useMoralis } from "react-moralis";
 import loadingGif from "../public/walk.gif";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import axiosInstance from "../axios";
 import { addFreelancer } from "../api/freelancer";
 import { emailVerify } from "../api/auth";
 import useAuth from "../hooks/useAuth";
-import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";

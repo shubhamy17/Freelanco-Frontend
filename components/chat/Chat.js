@@ -5,46 +5,10 @@ import { socket } from "../../socket";
 import { Box, Fab, List, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import { MessageLeft, MessageRight } from "./Message";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+// import AttachFileIcon from '@mui/icons-material/AttachFile';
 import TextInput from "./TextInput";
 import { Fragment } from "react";
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    paper: {
-      width: "80vw",
-      height: "80vh",
-      maxWidth: "500px",
-      maxHeight: "700px",
-      display: "flex",
-      alignItems: "center",
-      flexDirection: "column",
-      position: "relative",
-    },
-    paper2: {
-      width: "80vw",
-      maxWidth: "500px",
-      display: "flex",
-      alignItems: "center",
-      flexDirection: "column",
-      position: "relative",
-    },
-    container: {
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    messagesBody: {
-      width: "calc( 100% - 20px )",
-      margin: 10,
-      overflowY: "scroll",
-      height: "calc( 100% - 80px )",
-    },
-  })
-);
 
 function Chat({ selected, conversations, to, freelancerData }) {
   const { user } = useAuth();
@@ -153,12 +117,20 @@ function Chat({ selected, conversations, to, freelancerData }) {
   useEffect(() => {
     if (socket) {
       socket.on("new_message", (data) => {
+
         // Check if incoming data has a unique createdAt value
         if (selected === data.conversation_id) {
           // Update lastCreatedAt to current value
           // refc.scrollTop = refc.scrollHeight;
           dispatch({ type: "ADD_MESSAGE", payload: data.message });
         }
+        // else {
+        //   setNewMessageCount((prevSet) => {
+        //     const newSet = new Set(prevSet);
+        //     newSet.add(data.conversation_id);
+        //     return newSet;
+        //   });
+        // }
       });
     }
 
@@ -310,12 +282,12 @@ function Chat({ selected, conversations, to, freelancerData }) {
               return getTimeDisplayCondition(state.messages, id) ? (
                 <Fragment key={id}>
                   {id == 0
-                    ? generateDate(state.messages[id].created_at)
+                    ? generateDate(state.messages[id]?.created_at)
                     : id > 0 &&
-                      new Date(state.messages[id].created_at).getDate() -
-                      new Date(state.messages[id - 1].created_at).getDate() >
+                      new Date(state.messages[id]?.created_at).getDate() -
+                      new Date(state.messages[id - 1]?.created_at).getDate() >
                       0
-                      ? generateDate(state.messages[id].created_at)
+                      ? generateDate(state.messages[id]?.created_at)
                       : null}
                   {message.from != user?.wallet_address && (
                     <MessageLeft
@@ -384,8 +356,8 @@ function Chat({ selected, conversations, to, freelancerData }) {
                   {id == 0
                     ? generateDate(state?.messages[id]?.created_at)
                     : id > 0 &&
-                      new Date(state.messages[id].created_at).getDate() -
-                      new Date(state.messages[id - 1].created_at).getDate() >
+                      new Date(state.messages[id]?.created_at).getDate() -
+                      new Date(state.messages[id - 1]?.created_at).getDate() >
                       0
                       ? generateDate(state.messages[id].created_at)
                       : null}
@@ -475,7 +447,8 @@ function Chat({ selected, conversations, to, freelancerData }) {
                 onChange={handleFileChange}
               /> */}
             <div>
-              <AttachFileIcon onClick={handleIconClick} />
+              <svg xmlns="http://www.w3.org/2000/svg" onClick={handleIconClick} viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path d="M14.828 7.757l-5.656 5.657a1 1 0 1 0 1.414 1.414l5.657-5.656A3 3 0 1 0 12 4.929l-5.657 5.657a5 5 0 1 0 7.071 7.07L19.071 12l1.414 1.414-5.657 5.657a7 7 0 1 1-9.9-9.9l5.658-5.656a5 5 0 0 1 7.07 7.07L12 16.244A3 3 0 1 1 7.757 12l5.657-5.657 1.414 1.414z" /> </g> </svg>
+              {/* <AttachFileIcon onClick={handleIconClick} /> */}
               <input
                 type="file"
                 onChange={handleFileChange}
