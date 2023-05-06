@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { socket, connectSocket } from "../socket";
 import useAuth from "../hooks/useAuth";
-import CircularProgress from "@mui/material/CircularProgress";
 
 const Conversation = () => {
   const { user } = useAuth();
@@ -122,7 +121,7 @@ const Conversation = () => {
               or refreshing if you don't see your conversations
             </p> */}
           {/* <button onClick={() => getConversations()}>Get Data</button> */}
-          <CircularProgress />
+          <img src="loading.svg" height={50} width={50} />
         </div>
       ) : (
         <>

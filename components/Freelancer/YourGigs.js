@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import GigCard from "../Gigs/GigCard";
 import { getGigByUserId } from "../../api/gig";
-import CircularProgress from '@mui/material/CircularProgress';
 
 const YourGigs = () => {
   const { user } = useAuth();
@@ -50,7 +49,7 @@ const YourGigs = () => {
       <div className="flex flex-wrap gap-x-6 gap-y-6">
         {isLoading ? (
           <div className="min-h-[calc(70vh)] flex items-center mt-5 ml-5 flex-col">
-            <CircularProgress />
+            <img src="loading.svg" height={50} width={50} />
           </div>
         ) : userGigs.length > 0 ? (
           userGigs.map((gig, idx) => <GigCard gig={gig} key={idx} />)

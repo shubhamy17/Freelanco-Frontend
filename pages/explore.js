@@ -7,7 +7,6 @@ import useAuth from ".././hooks/useAuth";
 import Deck from "../components/Explore/Deck";
 import { getProposalsOfClient } from "../api/auth";
 import { getAllGig, getPopular, getGigBySearch } from "../api/gig";
-import CircularProgress from "@mui/material/CircularProgress";
 
 const GigsListing = () => {
   const [mostPopular, setMostPopular] = useState([]);
@@ -48,7 +47,7 @@ const GigsListing = () => {
         <div className="flex  flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
           {isLoading && user ? (
             // Display the loading component while data is being fetched
-            <CircularProgress />
+            <img src="loading.svg" height={50} width={50} />
           ) : typeof searchedGigs == "object" && searchedGigs.length == 0 ? (
             mostPopular.length > 0 ? (
               mostPopular.map((gig) => (

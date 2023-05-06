@@ -2,7 +2,6 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { useRouter } from "next/router";
 import { socket } from "../../socket";
-import { Box, Fab, List, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import { MessageLeft, MessageRight } from "./Message";
 // import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -270,7 +269,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
           </div>
         )}
       </div>
-      <List
+      <div
         ref={refc}
         id={"list" + user.wallet_address}
         className="flex flex-col p-3 overflow-y-scroll scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
@@ -413,17 +412,13 @@ function Chat({ selected, conversations, to, freelancerData }) {
             })}
           </>
         ) : (
-          <Typography
-            component="h5"
-            variant="h5"
-            align="center"
-            mt="40vh"
-            color="grey.400"
+          <h5
+            className="border-gray-200 flex align-center justify-center h-screen"
           >
             This conversation is empty
-          </Typography>
+          </h5>
         )}
-      </List>
+      </div>
 
       <div
         className="border-t-2 border-gray-200 sm:mb-0"

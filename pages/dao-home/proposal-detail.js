@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { connectSocket, socket } from "../../socket";
 import useAuth from "../../hooks/useAuth";
 import Chat from "../../components/chat/Chat";
-import { CircularProgress, List, Typography } from "@mui/material";
 // import ChatMessage from "../../components/chat/ChatMessage";
 import { ethers } from "ethers";
 
@@ -175,7 +174,7 @@ const DaoProposalDetail = () => {
               or refreshing if you don't see your conversations
             </p> */}
             {/* <button onClick={() => getConversations()}>Get Data</button> */}
-            <CircularProgress />
+            <img src="loading.svg" height={50} width={50} />
           </div>
         ) : (
           <>

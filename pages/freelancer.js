@@ -16,7 +16,6 @@ import TxBox from "../components/Validation/TxBox";
 import jwt_decode from "jwt-decode";
 import useGigs from "../hooks/useGigs";
 import { uploadImage } from "../api/ipfs";
-import CircularProgress from '@mui/material/CircularProgress';
 
 const CreateFreelancerPage = () => {
   const { user, setUser, setToken } = useAuth();
@@ -441,7 +440,7 @@ const CreateFreelancerPage = () => {
             <>
               {isLoading ?
                 <div className="min-h-[calc(70vh)] flex items-center align-center justify-center mt-5 ml-5 w-full">
-                  <CircularProgress />
+                  <img src="loading.svg" height={50} width={50} />
                 </div> : <>
                   <label className="block font-bold text-xl mb-2">Skills:</label>
                   {/* {fields.map((item, index) => (

@@ -6,7 +6,6 @@ import ClientOrdersManagement from "../components/Client/OrderManagement";
 import { getProposalByGigRef } from "../api/proposal";
 import Link from "next/link";
 import Image from "next/image";
-import CircularProgress from '@mui/material/CircularProgress';
 
 const ClientProfile = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -112,7 +111,7 @@ const ClientProfile = () => {
           <div className="flex flex-wrap gap-x-6 gap-y-6">
             {isLoading ? (
               <div className="flex justify-center align-center ">
-                <CircularProgress />
+                <img src="loading.svg" height={50} width={50} />
               </div>
             ) : sentProposals.length > 0 ? (
               sentProposals.map((gig, idx) => {
