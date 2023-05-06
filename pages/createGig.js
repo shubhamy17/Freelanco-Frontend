@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
 import Packages from "../components/Freelancer/Packages";
 import loadingGif from "../public/walk.gif";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
@@ -13,8 +12,6 @@ import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import TxBox from "../components/Validation/TxBox";
 import { createGig } from "../api/gig";
-import CircularProgress from "@mui/material/CircularProgress";
-
 const CreateFreelancerPage = () => {
   const { user, isLogggedIn, gigContract, signer, setValues, isConnected } =
     useAuth();
@@ -131,11 +128,12 @@ const CreateFreelancerPage = () => {
     dataF.append("file", selectedFile);
 
     const res = await uploadImage(dataF);
-    setValue("ipfsImageHash", res.IpfsHash);
-    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setValue("ipfsImageHash", res.ipfsImageHash);
+    setValue("awsImageLink", res.awsImageLink);
+    setTxMessage(`ipfs hash: ${res.ipfsImageHash}`);
     setTimeout(() => {
       setShowTxDialog(false);
-    }, 2000);
+    }, 1000);
   };
 
   const sendJsonToBackend = async () => {

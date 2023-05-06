@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 // import jwt_decode from "jwt-decode";
-import { useMoralis } from "react-moralis";
 // import { loginUser, profile, validateUser } from "../api/auth";
 import useAuth from "../../hooks/useAuth";
 // import Web3 from "web3";
 import { useRouter } from "next/router";
-import CircularProgress from "@mui/material/CircularProgress";
 
 import {
   useAccount,
@@ -133,7 +131,7 @@ const LoginForm = ({ setWantsToLogin }) => {
             <>
               {isLoading ? (
                 <div className="flex w-3/4justify-end mt-5 mx-5">
-                  <CircularProgress />
+                <img src="loading.svg" height={50} width={50} />
                 </div>
               ) : (
                 <button

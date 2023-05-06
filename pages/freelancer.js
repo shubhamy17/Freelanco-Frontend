@@ -1,14 +1,12 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, useContext } from "react";
-import { useMoralis } from "react-moralis";
 import loadingGif from "../public/walk.gif";
 import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import axiosInstance from "../axios";
 import { addFreelancer } from "../api/freelancer";
 import { emailVerify } from "../api/auth";
 import useAuth from "../hooks/useAuth";
-import FileBase64 from "react-file-base64";
 import axios from "axios";
 import { useAccount, useConnect, useSignMessage, useDisconnect } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
@@ -18,7 +16,6 @@ import TxBox from "../components/Validation/TxBox";
 import jwt_decode from "jwt-decode";
 import useGigs from "../hooks/useGigs";
 import { uploadImage } from "../api/ipfs";
-import CircularProgress from '@mui/material/CircularProgress';
 
 const CreateFreelancerPage = () => {
   const { user, setUser, setToken } = useAuth();
@@ -210,8 +207,9 @@ const CreateFreelancerPage = () => {
     dataF.append("file", e.target.files[0]);
     const res = await uploadImage(dataF);
     console.log("eeeeeeeeeee", res);
-    setValue("ipfsImageHash", res.IpfsHash);
-    setTxMessage(`ipfs hash: ${res.IpfsHash}`);
+    setValue("ipfsImageHash", res.ipfsImageHash);
+    setValue("awsImageLink", res.awsImageLink);
+    setTxMessage(`ipfs hash: ${res.ipfsImageHash}`);
     setTimeout(() => {
       setShowTxDialog(false);
     }, 1000);
@@ -442,7 +440,7 @@ const CreateFreelancerPage = () => {
             <>
               {isLoading ?
                 <div className="min-h-[calc(70vh)] flex items-center align-center justify-center mt-5 ml-5 w-full">
-                  <CircularProgress />
+                  <img src="loading.svg" height={50} width={50} />
                 </div> : <>
                   <label className="block font-bold text-xl mb-2">Skills:</label>
                   {/* {fields.map((item, index) => (

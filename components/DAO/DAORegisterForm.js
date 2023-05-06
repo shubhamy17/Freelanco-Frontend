@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { useMoralis } from "react-moralis";
 import useAuth from "../../hooks/useAuth";
 import { ethers } from "ethers";
 import ErrorBox from "../Validation/ErrorBox";
 import { useAccount, useNetwork } from "wagmi";
 
 const DAORegisterForm = ({ setWantsToLogin }) => {
-  const { account } = useMoralis();
   const { setUser, setIsLoggedIn, user, daoNFTContract, signer } = useAuth();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);

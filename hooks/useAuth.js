@@ -2,7 +2,7 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import axios from "axios";
 import { getProfile, getProposalsOfClient } from "../api/auth";
 import jwt_decode from "jwt-decode";
-// import { socket, connectSocket } from "../socket";
+import { socket, connectSocket } from "../socket";
 const {
   contractAddresses,
   Gig_abi,
@@ -41,8 +41,11 @@ export const AuthProvider = ({ children }) => {
   const [freelancerCompletenes, setCompleteness] = useState(undefined);
   const [search, setSearch] = useState("");
   const [theme, setTheme] = useState(undefined);
-
+  const [searchedGigs, setSearchedGigs] = useState([]);
+  const [newMessageCount, setNewMessageCount] = useState(new Set());
   const [isWrongNetwork, setIsWrongNetwork] = useState(undefined);
+
+  console.log("newMessageCount...........................", newMessageCount);
 
   async function setValues() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -94,6 +97,29 @@ export const AuthProvider = ({ children }) => {
       setWhitelistNFT(whitelist);
     }
   }
+
+
+  useEffect(() => {
+    console.log(socket, "auth socket");
+    if (!socket && !socket?.connected && user) {
+      console.log("connecting.....");
+      connectSocket(user.wallet_address);
+    }
+  }, [user, socket]);
+
+
+  useEffect(() => {
+    if (socket && socket.connected && user ) {
+      console.log("connectong new message....................");
+      socket.on("new_message", (data) => {
+        setNewMessageCount((prevSet) => {
+          const newSet = new Set(prevSet);
+          newSet.add(data.conversation_id);
+          return newSet;
+        });
+      })
+    }
+  }, [user, socket, socket?.connected]);
 
   useEffect(() => {
     if (typeof window.ethereum !== "undefined") {
@@ -162,6 +188,10 @@ export const AuthProvider = ({ children }) => {
         setValues,
         theme,
         setTheme,
+        searchedGigs,
+        setSearchedGigs,
+        newMessageCount,
+        setNewMessageCount
       }}
     >
       {children}

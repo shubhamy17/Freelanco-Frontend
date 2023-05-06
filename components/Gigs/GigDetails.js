@@ -5,20 +5,18 @@ import { getGigById } from "../../api/gig";
 import { useRouter } from "next/router";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
-import { constSelector } from "recoil";
 
 const Slider = () => {
   return <div>Slider</div>;
 };
 
-
-
 const GigDetails = ({ gig }) => {
   const router = useRouter();
-  // let gigId = {};
-  // if (router.query.gig) {
-  //   gigId = JSON.parse(router.query.gig);
-  // }
+  let gigId = {};
+  if (router.query.gig) {
+    gigId = JSON.parse(router.query.gig);
+  }
+
   // const [gig, setGig] = useState({});
   // useEffect(() => {
   //   async function fetchGig() {
@@ -41,25 +39,25 @@ const GigDetails = ({ gig }) => {
     });
   };
 
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
 
-  const getDataFromIPFS = async () => {
-    const json = await axios.get("https://ipfs.io/ipfs/" + gig.tokenUri);
+  // const getDataFromIPFS = async () => {
+  //   const json = await axios.get("https://ipfs.io/ipfs/" + gig.tokenUri);
 
-    // const imageF = await axios.get(
-    // "https://ipfs.io/ipfs/" + json.data.image.substring(7)
-    // );
+  //   // const imageF = await axios.get(
+  //   // "https://ipfs.io/ipfs/" + json.data.image.substring(7)
+  //   // );
 
-    setImage("https://ipfs.io/ipfs/" + json.data.image.substring(7));
-  };
+  //   setImage("https://ipfs.io/ipfs/" + json.data.image.substring(7));
+  // };
 
   const [showReviews, setShowReviews] = useState(false);
 
-  useEffect(() => {
-    if (gig.tokenUri) {
-      getDataFromIPFS();
-    }
-  }, [gig]);
+  // useEffect(() => {
+  //   if (gig.tokenUri) {
+  //     getDataFromIPFS();
+  //   }
+  // }, [gig]);
 
   return (
     <div className="min-h-[calc(70vh)] ">
@@ -92,10 +90,10 @@ const GigDetails = ({ gig }) => {
         </div>
       </div>
       <div className="w-full pl-8">
-        {image && (
+        {gig?.awsImageLink && (
           <Image
             className="rounded-3xl w-full h-[60vh]"
-            src={image}
+            src={gig?.awsImageLink}
             alt="product image"
             height={500}
             width={800}
@@ -281,9 +279,7 @@ const GigDetails = ({ gig }) => {
                 <div className="flex justify-between">
                   <div className="flex p-4 rounded-lg my-2">
                     <Image
-                      src={
-                        "https://ipfs.io/ipfs/" + gig?.freelancer?.ipfsImageHash
-                      }
+                      src={gig?.freelancer?.awsImageLink}
                       alt=""
                       width={500}
                       height={500}

@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
-import { useMoralis } from "react-moralis";
-// import { loginUser, profile, validateUser } from "../api/auth";
 import useAuth from "../../hooks/useAuth";
 import { useRouter } from "next/router";
 import ErrorBox from "../Validation/ErrorBox";
 import { useAccount, useNetwork, useSignMessage } from "wagmi";
 import { requestMessage, verifySignature } from "../../api/auth";
-// import Web3 from "web3";
 
 const { ethers } = require("ethers");
 
@@ -25,7 +22,6 @@ const LoginForm = ({ setWantsToLogin }) => {
     isWrongNetwork,
     daoNFTContract,
   } = useAuth();
-  const { account } = useMoralis();
   const router = useRouter();
 
   const { address } = useAccount();

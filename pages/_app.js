@@ -1,5 +1,5 @@
 import "../styles/globals.css";
-import { MoralisProvider } from "react-moralis";
+// import { MoralisProvider } from "react-moralis";
 import NavBar from "../components/NavBar";
 import { AuthProvider } from "../hooks/useAuth";
 import { GigsProvider } from "../hooks/useGigs";
@@ -15,7 +15,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { SessionProvider } from "next-auth/react";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { RecoilRoot } from "recoil";
+// import { RecoilRoot } from "recoil";
 
 import "@rainbow-me/rainbowkit/styles.css";
 
@@ -58,11 +58,11 @@ function MyApp({ Component, pageProps }) {
   return (
     <WagmiConfig client={client}>
       <SessionProvider session={pageProps.session} refetchInterval={0}>
-        <MoralisProvider initializeOnMount={false}>
+        {/* <MoralisProvider initializeOnMount={false}> */}
           <RainbowKitProvider chains={chains} theme={darkTheme()}>
             <AuthProvider>
               <GigsProvider>
-                <RecoilRoot>
+                {/* <RecoilRoot> */}
                   <NavBar />
                   <meta
                     name="viewport"
@@ -70,11 +70,11 @@ function MyApp({ Component, pageProps }) {
                   />
                   <Component {...pageProps} />
                   <Analytics />
-                </RecoilRoot>
+                {/* </RecoilRoot> */}
               </GigsProvider>
             </AuthProvider>
           </RainbowKitProvider>
-        </MoralisProvider>
+        {/* </MoralisProvider> */}
       </SessionProvider>
     </WagmiConfig>
   );

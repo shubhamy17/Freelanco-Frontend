@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import EditModal from "./EditModal";
 import { freelancerProfile } from "../../api/profile";
-import ReactMarkdown from "react-markdown";
 
 const FreelancerDetails = ({ freelancerUser, setFreelancerUser }) => {
   const { user, setCurrentFreelancerData, currentFreelancerData } = useAuth();
