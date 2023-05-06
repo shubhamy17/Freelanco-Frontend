@@ -57,7 +57,7 @@ const CreateFreelancerPage = () => {
   // const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { connectAsync } = useConnect();  
+  const { connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const { isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
@@ -179,16 +179,16 @@ const CreateFreelancerPage = () => {
       const userData = { ...data, wallet_address: user?.wallet_address };
       const result = await addFreelancer(userData);
       // router.push("/seller");
-      console.log(result);
+      console.log("freelancer", result);
       // const token = result.token;
-      localStorage.setItem("token", result.token);
-      setToken(result.token);
+      // localStorage.setItem("token", result.token);
+      // setToken(result.token);
 
       try {
-        const decodedToken = jwt_decode(result.token);
-        console.log(decodedToken);
-        setUser(decodedToken.data.user);
-        console.log(user);
+        // const decodedToken = jwt_decode(result.token);
+        // console.log(decodedToken);
+        setUser(result.freelancer);
+        // console.log(user);
 
         router.push("/seller");
       } catch (error) {
