@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { requestMessage, verifySignature } from "../../api/auth";
-import Button from '@mui/material/Button';
 
 import jwt_decode from "jwt-decode";
 
@@ -152,9 +151,6 @@ const NavBar = () => {
         <span className={"text-md ml-2 px-2 border rounded-2xl" + borderClass}>
           Beta
         </span>
-        <Button variant="contained" color="success">
-          Success
-        </Button>
         {isSearchPage && (
           <>
             <div className="flex justify-start items-center ml-5 mt-1 hideItOut">
