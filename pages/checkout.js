@@ -8,6 +8,9 @@ import { ethers } from "ethers";
 import axios from "axios";
 import ErrorBox from "../components/Validation/ErrorBox";
 import TxBox from "../components/Validation/TxBox";
+import { useSigner } from 'wagmi'
+
+
 
 const checkout = () => {
   const router = useRouter();
@@ -20,7 +23,7 @@ const checkout = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [daoCharge, setDaoCharge] = useState(0);
   const [total, setTotal] = useState();
-  const { user, freelancoContract, signer } = useAuth();
+  const { user, freelancoContract } = useAuth();
   const [conversationRate, setConvertionRate] = useState(undefined);
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -28,6 +31,9 @@ const checkout = () => {
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [txMessage, setTxMessage] = useState(undefined);
   const [validationErrors, setValidationErrors] = useState("");
+  const { data: signer, isError, isLoading } = useSigner()
+
+  console.log("singner....", isError, isLoading);
 
   const {
     register,
@@ -53,96 +59,98 @@ const checkout = () => {
   };
 
   const submit_proposal = async () => {
-    const errors = {};
+      try {
+      const errors = {};
 
-    if (!getValues("terms")) {
-      errors.terms = "terms is required";
-    }
-
-    if (!getValues("freelancer_charges")) {
-      errors.charge = "freelancer charges required";
-    }
-
-    const selectedDateString = getValues("deadline");
-
-    if (!selectedDateString) {
-      errors.deadline = "please mention deadline";
-    } else {
-      const selectedDate = new Date(selectedDateString);
-      const currentDate = new Date();
-      const selectedTimestamp = selectedDate.getTime();
-      const currentTimestamp = currentDate.getTime();
-      if (selectedTimestamp < currentTimestamp) {
-        errors.deadline =
-          "please select a date that is on or after the current date";
+      if (!getValues("terms")) {
+        errors.terms = "terms is required";
       }
-    }
-    console.log(errors);
 
-    // if (!getValues("deadline")) {
-    //   errors.deadline = "please mention deadline";
-    // }
-    // if (getValues("deadline") && getValues("deadline") < new Date()) {
-    //   console.log("hii");
-    //   errors.deadline = "please select a date that is on or after the current date";
-    // }
+      if (!getValues("freelancer_charges")) {
+        errors.charge = "freelancer charges required";
+      }
 
-    setValidationErrors(errors);
+      const selectedDateString = getValues("deadline");
 
-    if (Object.keys(errors).length != 0) {
-      return;
-    }
-
-    const d = {
-      ...data,
-      client_ref: user?._id,
-      freelancer_ref: gig?.freelancer_ref,
-      gig_ref: gig?._id,
-    };
-    let contractWithSigner = freelancoContract.connect(signer);
-
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-
-    const _deadline =
-      (Math.floor(new Date(data.deadline).getTime() / 1000) -
-        currentTimestamp) /
-      12;
-    try {
-      console.log("freelanco:", contractWithSigner);
-      let tx = await contractWithSigner.sendOffer(
-        // result.data._id.toString(),
-        gig.tokenId,
-        gig.freelancer.wallet_address,
-        data.terms,
-        Math.floor(_deadline),
-
-        {
-          value: ethers.utils.parseEther(
-            Math.floor(data.price / 1.11).toString()
-          ),
-          gasLimit: 1000000,
-        }
-      );
-      console.log("TX HASH OBJECT: ", tx);
-
-      setTxMessage(tx.hash);
-      setShowTxDialog(true);
-      await tx.wait(6);
-      setShowTxDialog(false);
-      router.push("/client-profile");
-      console.log("TX: RECEIPT OBJECT:", tx);
-      setTxMessage(tx.hash);
-    } catch (e) {
-      setShowErrorDialog(true);
-      if (e.toString().includes("rejected")) {
-        setErrorMessage("User declined the action");
-      } else if (e.toString().includes("deadline")) {
-        setErrorMessage("Please select a date that is after today's date");
+      if (!selectedDateString) {
+        errors.deadline = "please mention deadline";
       } else {
-        setErrorMessage(e.toString());
+        const selectedDate = new Date(selectedDateString);
+        const currentDate = new Date();
+        const selectedTimestamp = selectedDate.getTime();
+        const currentTimestamp = currentDate.getTime();
+        if (selectedTimestamp < currentTimestamp) {
+          errors.deadline =
+            "please select a date that is on or after the current date";
+        }
       }
-    }
+      console.log(errors);
+
+      // if (!getValues("deadline")) {
+      //   errors.deadline = "please mention deadline";
+      // }
+      // if (getValues("deadline") && getValues("deadline") < new Date()) {
+      //   console.log("hii");
+      //   errors.deadline = "please select a date that is on or after the current date";
+      // }
+
+      setValidationErrors(errors);
+
+      if (Object.keys(errors).length != 0) {
+        return;
+      }
+
+      const d = {
+        ...data,
+        client_ref: user?._id,
+        freelancer_ref: gig?.freelancer_ref,
+        gig_ref: gig?._id,
+      };
+      if(!signer){
+        throw new Error("please connect your wallet");
+      }
+      let contractWithSigner = freelancoContract.connect(signer);
+      console.log(contractWithSigner, "contractWithSigner");
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+
+      const _deadline =
+        (Math.floor(new Date(data.deadline).getTime() / 1000) -
+          currentTimestamp) / 12;
+     
+        let tx = await contractWithSigner.sendOffer(
+          gig.tokenId,
+          gig.freelancer.wallet_address,
+          data.terms,
+          Math.floor(_deadline),
+
+          {
+            value: ethers.utils.parseEther(
+              Math.floor(data.price / 1.11).toString()
+            ),
+            gasLimit: 1000000,
+          }
+        );
+        console.log("TX HASH OBJECT: ", tx);
+
+        setTxMessage(tx.hash);
+        setShowTxDialog(true);
+        await tx.wait();
+        setShowTxDialog(false);
+        router.push("/client-profile");
+        console.log("TX: RECEIPT OBJECT:", tx);
+        setTxMessage(tx.hash);
+      } catch (e) {
+        setShowErrorDialog(true);
+        if (e.toString().includes("rejected")) {
+          setErrorMessage("User declined the action");
+        } else if (e.toString().includes("deadline")) {
+          setErrorMessage("Please select a date that is after today's date");
+        } else {
+          setErrorMessage(e.toString());
+        }
+      }
   };
+
 
   useEffect(() => {
     const apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`;
@@ -168,7 +176,7 @@ const checkout = () => {
         show={showTxDialog}
         cancel={setShowTxDialog}
         txMessage={txMessage}
-        // routeToPush={"/client-profile"}
+      // routeToPush={"/client-profile"}
       />
       <div className="flex justify-start items-start bg-gray-50 w-full p-14 pt-20 px-40">
         <div className="w-full flex-col justify-start items-start mr-10">
@@ -247,8 +255,8 @@ const checkout = () => {
               <input
                 {...register("deadline")}
                 type="date"
-                // selected={startDate}
-                // onChange={(date) => setStartDate(date)}
+              // selected={startDate}
+              // onChange={(date) => setStartDate(date)}
               />
             </div>
           </div>

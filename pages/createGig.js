@@ -11,21 +11,25 @@ import axios from "axios";
 import { default as ReactSelect } from "react-select";
 import { components } from "react-select";
 import TxBox from "../components/Validation/TxBox";
+import ErrorBox from "../components/Validation/ErrorBox";
 import { createGig } from "../api/gig";
+import { useSigner } from 'wagmi'
+
+
 const CreateFreelancerPage = () => {
-  const { user, isLogggedIn, gigContract, signer, setValues, isConnected } =
+  const { user, isLogggedIn, gigContract, isConnected } =
     useAuth();
   const { categories } = useGigs();
 
   const router = useRouter();
 
   const [isShortTermSelected, setIsShortTermSelected] = useState(false);
-  const [title, setTitle] = useState("");
-  const [skillsChosen, setSkillsChosen] = useState([]);
-  const [isHourlySelected, setIsHourlySelected] = useState(false);
-  const [price, setPrice] = useState(null);
-  const [jd, setJd] = useState("");
-  const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
+  // const [title, setTitle] = useState("");
+  // const [skillsChosen, setSkillsChosen] = useState([]);
+  // const [isHourlySelected, setIsHourlySelected] = useState(false);
+  // const [price, setPrice] = useState(null);
+  // const [jd, setJd] = useState("");
+  // const [skills, setSkills] = useState(["C++", "Python", "Tailwind", "AI/ML"]);
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(false);
   const [subCategories, setSubCategories] = useState([]);
@@ -36,7 +40,9 @@ const CreateFreelancerPage = () => {
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [txMessage, setTxMessage] = useState(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(undefined);
+  const { data: signer, isError, isLoading } = useSigner()
 
   const {
     register,
@@ -150,34 +156,42 @@ const CreateFreelancerPage = () => {
   };
 
   const contractCall = async () => {
-    new Promise(async (res, rej) => {
-      await setValues();
-      res();
-    }).then(async () => {
+    try {
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
+      setIsMinted(false);
+      setShowSubmitDialog(false);
       let contractWithSigner = gigContract.connect(signer);
 
       if (isMinted) {
+        setTxMessage("Gig minting is in progress......");
+        setShowTxDialog(true);
+        let tx = await contractWithSigner.safeMint(jsonURI, {
+          gasLimit: 500000,
+        });
         try {
-          let tx = await contractWithSigner.safeMint(jsonURI, {
-            gasLimit: 500000,
-          });
-          try {
-            await createGig(data);
-          } catch (e) {
-            console.log("Unable to create gig due to: ", e.toString());
-          }
-          await tx.wait();
-
-          setIsMinted(false);
-
-          router.push("/seller");
-        } catch (err) {
-          console.log(err);
+          await createGig(data);
+        } catch (e) {
+          console.log("Unable to create gig due to: ", e.toString());
         }
+        await tx.wait();
+        setShowTxDialog(false);
+        router.push("/seller");
       } else {
-        console.log("NOT MINTED");
+        throw new Error("NOT MINTED");
       }
-    });
+    } catch (e) {
+      setShowTxDialog(false);
+      setShowErrorDialog(true);
+      if (e.toString().includes("rejected")) {
+        setErrorMessage("User declined the action");
+      } else if (e.toString().includes("deadline")) {
+        setErrorMessage("Please select a date that is after today's date");
+      } else {
+        setErrorMessage(e.toString());
+      }
+    }
   };
 
   function handleValidation() {
@@ -279,11 +293,16 @@ const CreateFreelancerPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-120px)] mt-20">
+      <ErrorBox
+        show={showErrorDialog}
+        cancel={setShowErrorDialog}
+        errorMessage={errorMessage}
+      />
       <TxBox
         show={showTxDialog}
         cancel={setShowTxDialog}
         txMessage={txMessage}
-        // routeToPush={"/client-profile"}
+      // routeToPush={"/client-profile"}
       />
       <div className="h-3/4 w-[calc(70vw)] border-2 border-gray-200 shadow-lg">
         <div className="h-16 w-full flex justify-start items-center border-b pl-8">
@@ -751,22 +770,22 @@ const CreateFreelancerPage = () => {
                       setShowSubmitDialog(true);
                     }
                   }}
-                  // onClick={submitGig}
-                  // setLoading(true);
-                  // postJob({
-                  //   is_hourly: isHourlySelected ? "hourly" : "fixed",
-                  //   job_length: isShortTermSelected ? "short" : "long",
-                  //   title,
-                  //   description: jd,
-                  //   status: "open",
-                  //   budget: price,
-                  //   skills: skillsChosen,
-                  //   company_posted: user?._id,
-                  // }).then(() => {
-                  //   setLoading(false);
-                  //   navigate("/dashboard");
-                  // });
-                  // router.push("/seller");
+                // onClick={submitGig}
+                // setLoading(true);
+                // postJob({
+                //   is_hourly: isHourlySelected ? "hourly" : "fixed",
+                //   job_length: isShortTermSelected ? "short" : "long",
+                //   title,
+                //   description: jd,
+                //   status: "open",
+                //   budget: price,
+                //   skills: skillsChosen,
+                //   company_posted: user?._id,
+                // }).then(() => {
+                //   setLoading(false);
+                //   navigate("/dashboard");
+                // });
+                // router.push("/seller");
                 >
                   {/* <span className="" onClick={() => submitGig()}> */}
                   <span className="">Submit</span>

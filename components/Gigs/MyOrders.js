@@ -6,9 +6,10 @@ import GigRating from "./GigRating";
 import MakeDispute from "./MakeDispute";
 import ErrorBox from "../Validation/ErrorBox";
 import TxBox from "../Validation/TxBox";
+import { useSigner } from 'wagmi'
 
 const MyOrders = ({ ordersData }) => {
-  const { user, freelancoContract, signer } = useAuth();
+  const { user, freelancoContract } = useAuth();
   const [selectedOrder, setSeletedOrder] = useState(0);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
@@ -19,6 +20,7 @@ const MyOrders = ({ ordersData }) => {
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [txMessage, setTxMessage] = useState(undefined);
+  const { data: signer, isError, isLoading } = useSigner()
 
   console.log("ORDERS: ,", ordersData);
 
@@ -28,6 +30,9 @@ const MyOrders = ({ ordersData }) => {
         "Sending to Offer ID: ",
         BigInt(ordersData[selectedOrder]?.offerId)
       );
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
       let contractWithSigner = freelancoContract.connect(signer);
       let tx = await contractWithSigner.markComplete(
         BigInt(ordersData[selectedOrder]?.offerId),
@@ -58,6 +63,9 @@ const MyOrders = ({ ordersData }) => {
         "Sending to Offer ID: ",
         BigInt(ordersData[selectedOrder]?.offerId)
       );
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
       let contractWithSigner = freelancoContract.connect(signer);
       let tx = await contractWithSigner.disputeContract(
         BigInt(ordersData[selectedOrder]?.offerId),

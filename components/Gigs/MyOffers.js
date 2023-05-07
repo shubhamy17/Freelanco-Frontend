@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import ErrorBox from "../Validation/ErrorBox";
 import TxBox from "../Validation/TxBox";
+import { useSigner } from 'wagmi'
 
 const MyGigActions = ({ proposalsData }) => {
-  const { user, freelancoContract, signer } = useAuth();
+  const { user, freelancoContract } = useAuth();
   const [loading, setLoading] = useState(false);
   const interviewingProposals = [];
   const job = {};
@@ -18,6 +19,7 @@ const MyGigActions = ({ proposalsData }) => {
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [txMessage, setTxMessage] = useState(undefined);
+  const { data: signer, isError, isLoading } = useSigner()
 
   console.log("PROPOSALS SENT: ", proposalsData);
 
@@ -28,6 +30,9 @@ const MyGigActions = ({ proposalsData }) => {
         "Sending to Offer ID: ",
         BigInt(proposalsData[selectedOrder]?.offerId)
       );
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
       let contractWithSigner = freelancoContract.connect(signer);
       let tx = await contractWithSigner.approveOffer(
         BigInt(proposalsData[selectedOrder]?.offerId),
@@ -58,6 +63,9 @@ const MyGigActions = ({ proposalsData }) => {
         "Sending to Offer ID: ",
         BigInt(proposalsData[selectedOrder]?.offerId)
       );
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
       let contractWithSigner = freelancoContract.connect(signer);
       let tx = await contractWithSigner.rejectOffer(
         BigInt(proposalsData[selectedOrder]?.offerId),
@@ -105,7 +113,7 @@ const MyGigActions = ({ proposalsData }) => {
                     <div className="flex flex-col">
                       <Link
                         href={`/freelancer-profile/${proposal?._id}`}
-                        // to={`/freelancer-profile/6`}
+                      // to={`/freelancer-profile/6`}
                       >
                         <span className="font-bold text-md hover:underline cursor-pointer">
                           {proposal?.client_address}

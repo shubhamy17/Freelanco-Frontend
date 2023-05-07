@@ -16,6 +16,7 @@ import { requestMessage, verifySignature } from "../../api/auth";
 
 import jwt_decode from "jwt-decode";
 import ErrorBox from "../Validation/ErrorBox";
+import TxBox from "../Validation/TxBox";
 
 const LoginForm = ({ setWantsToLogin }) => {
   const router = useRouter();
@@ -26,6 +27,8 @@ const LoginForm = ({ setWantsToLogin }) => {
   const { signMessageAsync } = useSignMessage();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [showTxDialog, setShowTxDialog] = useState(false);
+  const [txMessage, setTxMessage] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   const { chain } = useNetwork();
@@ -53,6 +56,9 @@ const LoginForm = ({ setWantsToLogin }) => {
     // const { account, chain } = await connectAsync({
     //   connector: new InjectedConnector(),
     // });
+
+    setTxMessage("requesting signature from server.....")
+    setShowTxDialog(true);
     try {
       const userData = { address: address, chain: chain.id, network: "evm" };
       // making a post request to our 'request-message' endpoint
@@ -62,6 +68,7 @@ const LoginForm = ({ setWantsToLogin }) => {
       // signing the received message via metamask
       const signature = await signMessageAsync({ message });
       setIsLoading(true);
+      setTxMessage("verifying signature.....")
       const verification_data = { message, signature };
       const result = await verifySignature(verification_data);
 
@@ -69,7 +76,7 @@ const LoginForm = ({ setWantsToLogin }) => {
       //decrypt token and set user context
       const token = result.token;
       localStorage.setItem("token", token);
-
+      router.push("/explore");
       // const decodedToken = jwt.verify(
       //   token,
       //   "MyUltraSecurePassWordIWontForgetToChange",
@@ -81,9 +88,9 @@ const LoginForm = ({ setWantsToLogin }) => {
       setIsLoggedIn(true);
       setToken(result.token);
       setUser(decodedToken.data.user);
-      console.log(user);
       setValues();
-      router.push("/explore");
+      setShowTxDialog(false);
+      // router.push("/explore");
     } catch (e) {
       setShowErrorDialog(true);
       setErrorMessage("You are not a member");
@@ -106,6 +113,12 @@ const LoginForm = ({ setWantsToLogin }) => {
         cancel={setShowErrorDialog}
         show={showErrorDialog}
         errorMessage={errorMessage}
+      />
+      <TxBox
+        show={showTxDialog}
+        cancel={setShowTxDialog}
+        txMessage={txMessage}
+      // routeToPush={"/client-profile"}
       />
       <h1 className="text-7xl font-black text-white">Log in</h1>
       <p className="mt-2 text-gray-400 text-sm font-light">
@@ -131,7 +144,7 @@ const LoginForm = ({ setWantsToLogin }) => {
             <>
               {isLoading ? (
                 <div className="flex w-3/4justify-end mt-5 mx-5">
-                <img src="loading.svg" height={50} width={50} />
+                  <img src="loading.svg" height={50} width={50} />
                 </div>
               ) : (
                 <button

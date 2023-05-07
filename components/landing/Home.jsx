@@ -6,7 +6,7 @@ import useAuth from "../../hooks/useAuth";
 
 import ErrorBox from "../Validation/ErrorBox";
 import TxBox from "../Validation/TxBox";
-import { useNetwork } from "wagmi";
+import { useNetwork ,useSigner} from "wagmi";
 
 export function Countdown() {
   const [countdown, setCountdown] = useState({});
@@ -63,13 +63,14 @@ export function Countdown() {
 }
 
 export const Button = ({ text }) => {
-  const { whitelistNFT, chainId, signer } = useAuth();
+  const { whitelistNFT, chainId } = useAuth();
   const { chain } = useNetwork();
 
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [showTxDialog, setShowTxDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [txMessage, setTxMessage] = useState(undefined);
+   const { data: signer, isError, isLoading } = useSigner()
 
   const router = useRouter();
   return (
@@ -100,6 +101,9 @@ export const Button = ({ text }) => {
               setShowErrorDialog(true);
             } else {
               try {
+                if(!signer){
+                throw new Error("please connect your wallet");
+                }
                 let contractWithSigner = whitelistNFT.connect(signer);
                 let tx = await contractWithSigner.joinWhitelist({
                   value: BigInt("1300000000000000000"),

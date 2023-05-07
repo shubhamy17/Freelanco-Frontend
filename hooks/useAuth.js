@@ -11,6 +11,15 @@ const {
   whitelist_abi,
 } = require("../constants");
 const { ethers } = require("ethers");
+import {
+  useAccount,
+  useConnect,
+  useSignMessage,
+  useDisconnect,
+  useNetwork,
+  useProvider,
+  useSigner
+} from "wagmi";
 
 const context = createContext();
 const { Provider } = context;
@@ -44,8 +53,11 @@ export const AuthProvider = ({ children }) => {
   const [searchedGigs, setSearchedGigs] = useState([]);
   const [newMessageCount, setNewMessageCount] = useState(new Set());
   const [isWrongNetwork, setIsWrongNetwork] = useState(undefined);
+  const { chain } = useNetwork();
+  const { data: signers, isError, isLoading } = useSigner()
 
   console.log("newMessageCount...........................", newMessageCount);
+  // console.log(user, "...........................it's working");
 
   async function setValues() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);

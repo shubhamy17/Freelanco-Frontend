@@ -2,18 +2,22 @@ import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { ethers } from "ethers";
 import ErrorBox from "../Validation/ErrorBox";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSigner } from "wagmi";
 
 const DAORegisterForm = ({ setWantsToLogin }) => {
-  const { setUser, setIsLoggedIn, user, daoNFTContract, signer } = useAuth();
+  const { setUser, setIsLoggedIn, user, daoNFTContract } = useAuth();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const { data: signer, isError, isLoading } = useSigner()
 
   const { address } = useAccount();
   const { chain } = useNetwork();
 
   const requestNFT = async () => {
     try {
+      if (!signer) {
+        throw new Error("please connect your wallet");
+      }
       let contractWithSigner = daoNFTContract.connect(signer);
       let tx = await contractWithSigner.requestNft({
         value: ethers.utils.parseEther((0.11).toString()),
