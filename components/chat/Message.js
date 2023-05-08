@@ -97,8 +97,9 @@ const classes = {
   orange: {
     color: "#ff5722",
     backgroundColor: "#ff5722",
-    width: 4,
-    height:4
+    width: 40,
+    height:40,
+    marginTop:9
   },
   avatarNothing: {
     color: "transparent",
@@ -150,6 +151,7 @@ export const MessageLeft = (props) => {
       <div style={props.timestamp != null ? { "marginTop": "5px", ...classes.messageRow } : {...classes.messageRow}}>
         {props.timestamp != null ?
           <img
+            className="rounded-full"
             alt={displayName}
             style={classes.orange}
             src={photoURL}
