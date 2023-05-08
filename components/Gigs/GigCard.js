@@ -37,11 +37,22 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
       className="w-full bg-white rounded-lg shadow-md cursor-pointer"
       style={{
         maxWidth: "250px",
+        // padding: "1rem 1.2rem",
+        // border: "2px solid white";
+        backgroundImage: 'url(' +gig?.awsImageLink+ ')',
+        width: "100%",
+        height:"400px",
+        color:"white",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        display:"flex",
+        alignItems:"flex-end"
       }}
       onMouseOver={() => setIsHover(true)}
       onMouseOut={() => setIsHover(false)}
     >
-      {gig?.awsImageLink && (
+      {/* {gig?.awsImageLink && (
         <Image
           className="rounded-t-lg cursor-pointer"
           src={gig?.awsImageLink}
@@ -58,27 +69,27 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
             })
           }
         />
-      )}
-
-      <div className="flex justify-start items-center">
+      )} */}
+    <div style={{display:"flex",alignItems:"center", backgroundColor: "rgba(250,255,255,0.3)",width:"100%",padding:"4px"}}>
+    <div >
         <Image
-          className="rounded-3xl m-4 max-h-sm"
+          className="rounded-full m-4 max-h-sm"
           // src={"https://ipfs.io/ipfs/" + gig?.freelancer?.ipfsImageHash}
           src={gig?.freelancer?.awsImageLink}
           alt="product image"
-          width={20}
-          height={20}
+          width={32}
+          height={32}
         />
         <div className="flex-col">
-          <p className="font-bold text-md hover:underline cursor-pointer">
+          <h4 className="text-md hover:underline cursor-pointer" style={{fontSize:"16px",fontWeight:"600"}}>
             {gig?.freelancer?.name}
-          </p>
-          {gig?.freelancer?.isTopRated && (
+          </h4>
+          {/* {gig?.freelancer?.isTopRated && (
             <p className="text-blue-800 text-xs">Top Rated Seller</p>
-          )}
+          )} */}
         </div>
       </div>
-      <div className="px-5 pb-5">
+      <div >
         <h5
           className={
             "text-sm my-4 font-normal tracking-tight text-gray-900 " +
@@ -135,6 +146,8 @@ export default ({ isTopRated = true, gig, proposalsAll = [] }) => {
           </span>
         </div>
       </div>
+    </div>
+     
     </div>
   );
 };
