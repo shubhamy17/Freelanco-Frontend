@@ -208,10 +208,10 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
           messages[id].from == messages[id - 1].from &&
           prevTime == currentTime
         ) {
-          console.log("false");
+          // console.log(id," : false");
           return false;
         } else {
-          console.log("true")
+          // console.log(id, " : true")
           return true;
         }
       }
@@ -443,7 +443,7 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
             disabled={file}
             type="text"
             onChange={(e) => setMessage(e.target.value)}
-            // value={messageState}
+            value={messageState}
             ref={ref}
             onKeyDown={handleKeyDown}
             placeholder="Write your message!"
