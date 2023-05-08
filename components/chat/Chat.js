@@ -201,17 +201,14 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
       let currentTime = new Date(messages[id].created_at).getMinutes();
       if (id == 0) {
         return true;
-      } else if (id > 0 && id != messages.length - 1) {
+      } else if (id > 0 ) {
         let prevTime = new Date(messages[id - 1].created_at).getMinutes();
-        let nextTime = new Date(messages[id + 1].created_at).getMinutes();
         if (
           messages[id].from == messages[id - 1].from &&
           prevTime == currentTime
         ) {
-          // console.log(id," : false");
           return false;
         } else {
-          // console.log(id, " : true")
           return true;
         }
       }
