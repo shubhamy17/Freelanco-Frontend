@@ -125,25 +125,6 @@ const Conversation = () => {
               {/* <button onClick={() => getConversations()}>Get Data</button> */}
               <img src="loading.svg" height={50} width={50} />
             </div>
-<<<<<<< Updated upstream
-            {selected != null ? (
-              <Chat
-                  conversationsData={conversationsData}
-                  setConversationsData={setConversationsData}
-                selected={selected}
-                conversations={
-                  conversationsData.filter((c) => c._id == selected)[0].messages
-                }
-                to={
-                  conversationsData.filter((c) => c._id == selected)[0]
-                    .participants
-                }
-                setConversations={setConversations}
-                freelancerData={
-                  conversationsData.filter((c) => c._id == selected)[0]
-                    .freelancer[0]
-                }
-=======
           ) : (
             <>
               <div className="p-4 sm:ml-80 mt-16">
@@ -168,6 +149,8 @@ const Conversation = () => {
                 </div>
                 {selected != null ? (
                   <Chat
+                    conversationsData={conversationsData}
+                    setConversationsData={setConversationsData}
                     selected={selected}
                     conversations={
                       conversationsData.filter((c) => c._id == selected)[0]
@@ -191,26 +174,28 @@ const Conversation = () => {
                 conversationsData={conversationsData}
                 setSelected={setSelected}
                 toggleChatList={toggleChatList}
->>>>>>> Stashed changes
               />
             </>
           )}
         </>
       )}
       {!user && (
-        <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col absoluteCenter">
-          <img
-            src={"/empty.png"}
-            alt=""
-            className="w-1/4 h-1/4"
-            style={{
-              filter: "grayscale(1)",
-            }}
-          />
-          <p className="text-center text-gray-800 font-bold">Please log in</p>
-        </div>
+        <>
+          <div className="min-h-[calc(70vh)] flex items-center justify-center flex-col absoluteCenter">
+            <img
+              src={"/empty.png"}
+              alt=""
+              className="w-1/4 h-1/4"
+              style={{
+                filter: "grayscale(1)",
+              }}
+            />
+            <p className="text-center text-gray-800 font-bold">Please log in</p>
+          </div>
+        </>
       )}
     </>
+
     //  </div>
     // </div>
   );

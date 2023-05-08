@@ -8,12 +8,14 @@ import { MessageLeft, MessageRight } from "./Message";
 import TextInput from "./TextInput";
 import { Fragment } from "react";
 
-<<<<<<< Updated upstream
-
-function Chat({ conversationsData, setConversationsData, selected, conversations, to, freelancerData }) {
-=======
-function Chat({ selected, conversations, to, freelancerData }) {
->>>>>>> Stashed changes
+function Chat({
+  conversationsData,
+  setConversationsData,
+  selected,
+  conversations,
+  to,
+  freelancerData,
+}) {
   const { user, newMessageCount } = useAuth();
   const router = useRouter();
   const refc = useRef();
@@ -54,15 +56,15 @@ function Chat({ selected, conversations, to, freelancerData }) {
   };
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(()=>{
-    for(let i=0; i<2;i++){
-          let c = conversationsData[i];
-          if(c._id==selected){
-            c.messages = state.messages;
-          }
-        }
-        setConversationsData(conversationsData);
-  },[state])
+  useEffect(() => {
+    for (let i = 0; i < 2; i++) {
+      let c = conversationsData[i];
+      if (c._id == selected) {
+        c.messages = state.messages;
+      }
+    }
+    setConversationsData(conversationsData);
+  }, [state]);
 
   useEffect(() => {
     if (router.query.address) {
@@ -184,7 +186,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
       }
       return str.join(" ");
     } else {
-      str = str?.charAt(0)?.toUpperCase() + str?.substring(1);
+      str = str.charAt(0).toUpperCase() + str.substring(1);
       return str;
     }
   }
@@ -207,7 +209,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
       let currentTime = new Date(messages[id].created_at).getMinutes();
       if (id == 0) {
         return true;
-      } else if (id > 0 ) {
+      } else if (id > 0) {
         let prevTime = new Date(messages[id - 1].created_at).getMinutes();
         if (
           messages[id].from == messages[id - 1].from &&
@@ -224,7 +226,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
 
   return (
     // <div className="shadow ">
-    <div className="border-2 border-gray-200 border-solid rounded-lg bg-black">
+    <div className="border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
       <div className="w-full  sm:items-center justify-between border-gray-200">
         {freelancerData ? (
           <div
@@ -373,17 +375,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
                     ? generateDate(state?.messages[id]?.created_at)
                     : id > 0 &&
                       new Date(state.messages[id]?.created_at).getDate() -
-<<<<<<< Updated upstream
-                      new Date(state.messages[id - 1]?.created_at).getDate() >
-                      0
-                      ? generateDate(state.messages[id]?.created_at)
-                      : null}
-=======
                         new Date(state.messages[id - 1]?.created_at).getDate() >
                         0
-                    ? generateDate(state.messages[id].created_at)
+                    ? generateDate(state.messages[id]?.created_at)
                     : null}
->>>>>>> Stashed changes
                   {message.from != user?.wallet_address && (
                     <MessageLeft
                       message={message.text}
