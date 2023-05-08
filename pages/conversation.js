@@ -147,6 +147,8 @@ const Conversation = () => {
             </div>
             {selected != null ? (
               <Chat
+                  conversationsData={conversationsData}
+                  setConversationsData={setConversationsData}
                 selected={selected}
                 conversations={
                   conversationsData.filter((c) => c._id == selected)[0].messages

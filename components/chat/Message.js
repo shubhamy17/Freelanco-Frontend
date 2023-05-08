@@ -189,7 +189,7 @@ export const MessageLeft = (props) => {
 //avatarが右にあるメッセージ（自分）
 export const MessageRight = (props) => {
   const ext = isImageOrDocument(props.message);
-  console.log(props.message, ext);
+  // console.log(props.message, ext);
   const message = props.message ? props.message : "no message";
   const timestamp = props.timestamp ? (new Date(props.timestamp).getHours().toString().padStart(2, '0') + ":" + new Date(props.timestamp).getMinutes().toString().padStart(2, '0')) : "";
   return (

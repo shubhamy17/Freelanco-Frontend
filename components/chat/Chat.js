@@ -9,7 +9,7 @@ import TextInput from "./TextInput";
 import { Fragment } from "react";
 
 
-function Chat({ selected, conversations, to, freelancerData }) {
+function Chat({ conversationsData, setConversationsData, selected, conversations, to, freelancerData }) {
   const { user, newMessageCount } = useAuth();
   const router = useRouter();
   const refc = useRef();
@@ -48,8 +48,17 @@ function Chat({ selected, conversations, to, freelancerData }) {
         return state;
     }
   };
-
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(()=>{
+    for(let i=0; i<2;i++){
+          let c = conversationsData[i];
+          if(c._id==selected){
+            c.messages = state.messages;
+          }
+        }
+        setConversationsData(conversationsData);
+  },[state])
 
   useEffect(() => {
     if (router.query.address) {
@@ -199,8 +208,10 @@ function Chat({ selected, conversations, to, freelancerData }) {
           messages[id].from == messages[id - 1].from &&
           prevTime == currentTime
         ) {
+          console.log("false");
           return false;
         } else {
+          console.log("true")
           return true;
         }
       }
@@ -361,7 +372,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
                       new Date(state.messages[id]?.created_at).getDate() -
                       new Date(state.messages[id - 1]?.created_at).getDate() >
                       0
-                      ? generateDate(state.messages[id].created_at)
+                      ? generateDate(state.messages[id]?.created_at)
                       : null}
                   {message.from != user?.wallet_address && (
                     <MessageLeft
@@ -432,7 +443,7 @@ function Chat({ selected, conversations, to, freelancerData }) {
             disabled={file}
             type="text"
             onChange={(e) => setMessage(e.target.value)}
-            value={messageState}
+            // value={messageState}
             ref={ref}
             onKeyDown={handleKeyDown}
             placeholder="Write your message!"
