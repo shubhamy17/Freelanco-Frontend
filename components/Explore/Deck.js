@@ -10,10 +10,10 @@ export const CategoryCard = ({ category }) => {
   console.log(category);
 
   const imageMapping = {
-    GameFi: "/a.jpg",
-    DeFi: "/b.jpg",
-    NFT: "/c.jpg",
-    "Consensus Protocols": "/d.jpg",
+    GameFi: "/mid.png",
+    DeFi: "/mid2.png",
+    NFT: "/b.jpeg",
+    "Consensus Protocols": "/dd.png",
   };
 
   return (
@@ -27,7 +27,7 @@ export const CategoryCard = ({ category }) => {
         });
       }}
       className={
-        "w-[20vw] h-[40vh] bg-cover border-1 shadow-lg cursor-pointer mb-10"
+        "bg-cover border-1 shadow-2xl border border-gray-800 cursor-pointer mb-10"
       }
     >
       <Image
@@ -35,14 +35,14 @@ export const CategoryCard = ({ category }) => {
         width={500}
         height={500}
         // layout="fill"
-        objectFit="cover"
-        className="h-[40vh]"
+        // objectFit="cover"
+        className="lg:h-[40vh] md:h-[40vh] sm:h-[30vh] h-[20vh] w-[50vw]"
       />
       <div className="p-5">
-        <p className="font-normal text-xs text-blue-700 capitalize">
+        <p className="font-normal text-xs text-white capitalize">
           {category?.description}
         </p>
-        <h5 className="mb-2 text-xl font-bold tracking-tight text-blue-900">
+        <h5 className="mb-2 text-xl font-bold tracking-tight text-white">
           {category?.title}
         </h5>
       </div>
@@ -54,7 +54,7 @@ export const Deck = ({}) => {
   const { categories } = useGigs();
   return (
     <>
-      <div className="flex gap-x-5 items-center justify-center w-full">
+      <div className="md:flex gap-x-5 items-center justify-center w-full flex longIt lg:px-20 ">
         {categories?.slice(0, 4).map((category) => {
           return <CategoryCard category={category} />;
         })}

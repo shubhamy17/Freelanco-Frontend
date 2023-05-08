@@ -22,7 +22,7 @@ const ErrorBox = ({ cancel, show, errorMessage }) => {
         marginTop: 100,
       }}
     >
-      <div class="relative bg-white rounded-lg shadow">
+      <div class="relative bg-gray-900 rounded-lg shadow">
         <button
           type="button"
           class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
@@ -73,7 +73,7 @@ const ErrorBox = ({ cancel, show, errorMessage }) => {
             data-modal-hide="popup-modal"
             type="button"
             onClick={() => cancel(false)}
-            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
+            class="text-white bg-black hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
           >
             Cancel
           </button>

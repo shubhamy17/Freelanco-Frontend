@@ -33,26 +33,31 @@ const LoginForm = ({ setWantsToLogin }) => {
 
   const getData = async (userArg) => {
     let res;
-    if (user) {
-      res = await daoNFTContract.balanceOf(
-        ethers.utils.getAddress(user.wallet_address)
-      );
-    } else {
-      res = await daoNFTContract.balanceOf(
-        ethers.utils.getAddress(userArg.wallet_address)
-      );
-    }
-    if (!res) {
-      alert("You are not a member 2");
-      return;
-    }
-    res = Number(res._hex);
+    try {
+      if (user) {
+        res = await daoNFTContract.balanceOf(
+          ethers.utils.getAddress(user.wallet_address)
+        );
+      } else {
+        res = await daoNFTContract.balanceOf(
+          ethers.utils.getAddress(userArg.wallet_address)
+        );
+      }
+      if (!res) {
+        alert("You are not a member");
+        return;
+      }
+      res = Number(res._hex);
 
-    if (res > 0) {
-      router.push("/dao-home");
-    } else {
+      if (res > 0) {
+        router.push("/dao-home");
+      } else {
+        setShowErrorDialog(true);
+        setErrorMessage("You are not a member");
+      }
+    } catch (e) {
       setShowErrorDialog(true);
-      setErrorMessage("You are not a member");
+      setErrorMessage(e.toString());
     }
   };
 
@@ -82,19 +87,20 @@ const LoginForm = ({ setWantsToLogin }) => {
                 network: "evm",
               };
               // making a post request to our 'request-message' endpoint
-              const data = await requestMessage(userData);
-              const message = data.message;
-
-              // signing the received message via metamask
-              const signature = await signMessageAsync({ message });
-              const verification_data = { message, signature };
-              const result = await verifySignature(verification_data);
-
-              console.log(result.token);
-              //decrypt token and set user context
-              const token = result.token;
-              localStorage.setItem("token", token);
               try {
+                const data = await requestMessage(userData);
+                const message = data.message;
+
+                // signing the received message via metamask
+                const signature = await signMessageAsync({ message });
+                const verification_data = { message, signature };
+                const result = await verifySignature(verification_data);
+
+                console.log(result.token);
+                //decrypt token and set user context
+                const token = result.token;
+                localStorage.setItem("token", token);
+
                 // const decodedToken = jwt.verify(
                 //   token,
                 //   "MyUltraSecurePassWordIWontForgetToChange",

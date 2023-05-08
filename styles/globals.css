@@ -68,6 +68,9 @@ SVG Icons - svgicons.sparkk.fr
   .imageHide {
     display: none;
   }
+  .longIt {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 950px) {

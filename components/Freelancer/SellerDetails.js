@@ -25,6 +25,7 @@ const FreelancerDetails = ({ freelancerUser, setFreelancerUser }) => {
       if (user) {
         if (router.query.freelancer) {
           const freelancer = JSON.parse(router.query.freelancer);
+          console.log("FF", freelancer);
           const freelancer_id = freelancer._id;
           await getProfile(freelancer_id);
           // setFreelancerUser(JSON.parse(router.query.freelancer));
@@ -39,6 +40,15 @@ const FreelancerDetails = ({ freelancerUser, setFreelancerUser }) => {
         //     setFreelancerUser(JSON.parse(router.query.freelancer));
         //   }
         // }
+      } else {
+        if (router.query.freelancer) {
+          const freelancer = JSON.parse(router.query.freelancer);
+          console.log("FF", freelancer);
+          const freelancer_id = freelancer._id;
+          await getProfile(freelancer_id);
+          // setFreelancerUser(JSON.parse(router.query.freelancer));
+          setAllowEdit(false);
+        }
       }
     };
     fun();
@@ -54,6 +64,8 @@ const FreelancerDetails = ({ freelancerUser, setFreelancerUser }) => {
   // if (router.query.freelancer) {
   //   const freelancerData = JSON.parse(router.query.freelancer);
   // }
+
+  console.log("C", currentFreelancerData);
 
   return (
     <div className="mb-20 ">

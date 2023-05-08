@@ -10,7 +10,7 @@ const LoginPage = () => {
     <div
       className="flex pr-20 h-screen w-screen bg-cover transition ease-in-out delay-80"
       style={{
-        backgroundImage: `url('/trust.jpg')`,
+        backgroundImage: `url('/stars.jpeg')`,
 
         // filter: "blur(8px)",
       }}

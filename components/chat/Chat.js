@@ -8,8 +8,12 @@ import { MessageLeft, MessageRight } from "./Message";
 import TextInput from "./TextInput";
 import { Fragment } from "react";
 
+<<<<<<< Updated upstream
 
 function Chat({ conversationsData, setConversationsData, selected, conversations, to, freelancerData }) {
+=======
+function Chat({ selected, conversations, to, freelancerData }) {
+>>>>>>> Stashed changes
   const { user, newMessageCount } = useAuth();
   const router = useRouter();
   const refc = useRef();
@@ -87,29 +91,32 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
         const arrayBuffer = reader.result;
         const buffer = Buffer.from(arrayBuffer);
 
-        socket.emit('file_message', {
-          mimetype: file.type,
-          filename: file.name,
-          buffer: buffer,
-        }, (location) => {
-          setFile(null);
-          console.log("location", location);
-          const message = {
-            message: location,
-            conversation_id: selected,
-            from: user.wallet_address,
-            to: to.filter((addr) => addr !== user.wallet_address)[0],
-            type: "Link",
-          };
-          if (socket) {
-            socket.emit("text_message", message);
-            setMessage("");
-            ref.current.focus();
+        socket.emit(
+          "file_message",
+          {
+            mimetype: file.type,
+            filename: file.name,
+            buffer: buffer,
+          },
+          (location) => {
+            setFile(null);
+            console.log("location", location);
+            const message = {
+              message: location,
+              conversation_id: selected,
+              from: user.wallet_address,
+              to: to.filter((addr) => addr !== user.wallet_address)[0],
+              type: "Link",
+            };
+            if (socket) {
+              socket.emit("text_message", message);
+              setMessage("");
+              ref.current.focus();
+            }
           }
-        });
+        );
       };
-    }
-    else {
+    } else {
       const message = {
         message: messageState,
         conversation_id: selected,
@@ -128,7 +135,6 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
   useEffect(() => {
     if (socket) {
       socket.on("new_message", (data) => {
-
         // Check if incoming data has a unique createdAt value
         if (selected === data.conversation_id) {
           // Update lastCreatedAt to current value
@@ -178,7 +184,7 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
       }
       return str.join(" ");
     } else {
-      str = str.charAt(0).toUpperCase() + str.substring(1);
+      str = str?.charAt(0)?.toUpperCase() + str?.substring(1);
       return str;
     }
   }
@@ -218,7 +224,7 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
 
   return (
     // <div className="shadow ">
-    <div className="border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700">
+    <div className="border-2 border-gray-200 border-solid rounded-lg bg-black">
       <div className="w-full  sm:items-center justify-between border-gray-200">
         {freelancerData ? (
           <div
@@ -273,8 +279,8 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
                     ? to[0]
                     : reduceWalletAddress(to[0])
                   : width > 1000
-                    ? to[1]
-                    : reduceWalletAddress(to[1])}{" "}
+                  ? to[1]
+                  : reduceWalletAddress(to[1])}{" "}
               </p>
             </div>
           </div>
@@ -295,10 +301,10 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
                     ? generateDate(state.messages[id]?.created_at)
                     : id > 0 &&
                       new Date(state.messages[id]?.created_at).getDate() -
-                      new Date(state.messages[id - 1]?.created_at).getDate() >
-                      0
-                      ? generateDate(state.messages[id]?.created_at)
-                      : null}
+                        new Date(state.messages[id - 1]?.created_at).getDate() >
+                        0
+                    ? generateDate(state.messages[id]?.created_at)
+                    : null}
                   {message.from != user?.wallet_address && (
                     <MessageLeft
                       message={message.text}
@@ -367,10 +373,17 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
                     ? generateDate(state?.messages[id]?.created_at)
                     : id > 0 &&
                       new Date(state.messages[id]?.created_at).getDate() -
+<<<<<<< Updated upstream
                       new Date(state.messages[id - 1]?.created_at).getDate() >
                       0
                       ? generateDate(state.messages[id]?.created_at)
                       : null}
+=======
+                        new Date(state.messages[id - 1]?.created_at).getDate() >
+                        0
+                    ? generateDate(state.messages[id].created_at)
+                    : null}
+>>>>>>> Stashed changes
                   {message.from != user?.wallet_address && (
                     <MessageLeft
                       message={message.text}
@@ -423,9 +436,7 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
             })}
           </>
         ) : (
-          <h5
-            className="border-gray-200 flex align-center justify-center h-screen"
-          >
+          <h5 className="border-gray-200 flex align-center justify-center h-screen">
             This conversation is empty
           </h5>
         )}
@@ -456,12 +467,19 @@ function Chat({ conversationsData, setConversationsData, selected, conversations
             <div>
               {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <g> <path fill="none" d="M0 0h24v24H0z" /> <path d="M14.828 7.757l-5.656 5.657a1 1 0 1 0 1.414 1.414l5.657-5.656A3 3 0 1 0 12 4.929l-5.657 5.657a5 5 0 1 0 7.071 7.07L19.071 12l1.414 1.414-5.657 5.657a7 7 0 1 1-9.9-9.9l5.658-5.656a5 5 0 0 1 7.07 7.07L12 16.244A3 3 0 1 1 7.757 12l5.657-5.657 1.414 1.414z" /> </g> </svg> */}
               {/* <AttachFileIcon onClick={handleIconClick} /> */}
-              <img src={"attachment.svg"} onClick={handleIconClick} className="mx-3 cursor-pointer" height={"30px"} width={"30px"} alt="attach" />
+              <img
+                src={"attachment.svg"}
+                onClick={handleIconClick}
+                className="mx-3 cursor-pointer"
+                height={"30px"}
+                width={"30px"}
+                alt="attach"
+              />
               <input
                 type="file"
                 onChange={handleFileChange}
                 ref={fileInputRef}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
             </div>
             <button

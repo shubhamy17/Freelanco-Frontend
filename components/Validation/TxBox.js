@@ -51,7 +51,7 @@ const TxBox = ({ cancel, show, txMessage, routeToPush }) => {
         marginTop: 100,
       }}
     >
-      <div class="relative bg-white rounded-lg shadow">
+      <div class="relative bg-gray-900 rounded-lg shadow">
         <button
           type="button"
           class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
@@ -116,7 +116,7 @@ const TxBox = ({ cancel, show, txMessage, routeToPush }) => {
             data-modal-hide="popup-modal"
             type="button"
             onClick={() => cancel(false)}
-            class="text-blue-500 bg-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-white focus:z-10"
+            class="text-blue-500 bg-black hover:bg-white-800 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-black text-sm font-medium px-5 py-2.5 hover:text-white focus:z-10"
           >
             Hide
           </button>

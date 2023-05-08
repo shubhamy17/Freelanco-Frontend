@@ -57,7 +57,7 @@ const LoginForm = ({ setWantsToLogin }) => {
     //   connector: new InjectedConnector(),
     // });
 
-    setTxMessage("requesting signature from server.....")
+    setTxMessage("requesting signature from server.....");
     setShowTxDialog(true);
     try {
       const userData = { address: address, chain: chain.id, network: "evm" };
@@ -68,7 +68,7 @@ const LoginForm = ({ setWantsToLogin }) => {
       // signing the received message via metamask
       const signature = await signMessageAsync({ message });
       setIsLoading(true);
-      setTxMessage("verifying signature.....")
+      setTxMessage("verifying signature.....");
       const verification_data = { message, signature };
       const result = await verifySignature(verification_data);
 
@@ -118,7 +118,7 @@ const LoginForm = ({ setWantsToLogin }) => {
         show={showTxDialog}
         cancel={setShowTxDialog}
         txMessage={txMessage}
-      // routeToPush={"/client-profile"}
+        // routeToPush={"/client-profile"}
       />
       <h1 className="text-7xl font-black text-white">Log in</h1>
       <p className="mt-2 text-gray-400 text-sm font-light">
@@ -144,7 +144,11 @@ const LoginForm = ({ setWantsToLogin }) => {
             <>
               {isLoading ? (
                 <div className="flex w-3/4justify-end mt-5 mx-5">
-                  <img src="loading.svg" height={50} width={50} />
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif"
+                    height={50}
+                    width={50}
+                  />
                 </div>
               ) : (
                 <button

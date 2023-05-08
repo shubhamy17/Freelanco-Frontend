@@ -33,10 +33,23 @@ const GigsListing = () => {
   }, [user]);
 
   return (
-    <div className="flex-col mt-20 transition ease-in-out delay-80 w-full">
-      <div className="flex gap-x-5 my-12">
+    <div
+      className="flex-col pt-20 transition ease-in-out delay-80 w-full bg-cover"
+      style={{
+        backgroundImage: `url('/ff.jpeg')`,
+
+        // filter: "blur(8px)",
+      }}
+    >
+      <div className="flex gap-x-5 mb-12">
         {searchedGigs.length == 0 ? (
-          <div className="mt-10 w-full mr-5">
+          <div className="mt-10 w-full mr-5 flex flex-col">
+            <p className="text-white font-bold text-5xl pl-20 my-2">
+              Marketplace
+            </p>
+            <p className="text-gray-500 font-light text-xl pl-20 my-2 mb-5">
+              Explore the world of decentralized trust
+            </p>
             <Deck />
           </div>
         ) : (
@@ -44,7 +57,7 @@ const GigsListing = () => {
         )}
       </div>
       <div className="px-20 transition ease-in-out delay-80 ">
-        <div className="flex  flex-wrap gap-x-8 gap-y-6 mt-5 mb-20">
+        <div className="flex  flex-wrap gap-x-8 gap-y-6 mt-5 pb-20">
           {isLoading && user ? (
             // Display the loading component while data is being fetched
             <img src="loading.svg" height={50} width={50} />
